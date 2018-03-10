@@ -11,7 +11,11 @@ import java.util.Set;
  * including its text, the figures, tables and citations it refers to,
  * the index of this sentence in the article, the section this sentence appears
  * in, the subsection (if any) the sentence appears in.
+ *
+ * Split sentence into terms using a simple termTokenizer.
+ *
  * @author agarwal
+ * @author gaob@github
  */
 public class PMCArticleSentence {
     private String text;
