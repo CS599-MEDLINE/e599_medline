@@ -13,6 +13,8 @@ import java.util.List;
 public class ReadXMLFile {
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
+
+        pa = new PMCArticle("3102623", 0);
         PMCArticleFullText ft = pa.getFullText();
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
         for (PMCArticleSentence sentence : sentences) {

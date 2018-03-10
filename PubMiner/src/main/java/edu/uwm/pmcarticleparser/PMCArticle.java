@@ -110,7 +110,8 @@ public class PMCArticle {
             DOMParser parser = new DOMParser();
             parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             parser.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.NAMESPACES_FEATURE, false);
-            parser.parse("http://www.pubmedcentral.nih.gov/oai/oai.cgi?verb=GetRecord&metadataPrefix=pmc&identifier=oai:pubmedcentral.nih.gov:" + pmcId);
+            //parser.parse("http://www.pubmedcentral.nih.gov/oai/oai.cgi?verb=GetRecord&metadataPrefix=pmc&identifier=oai:pubmedcentral.nih.gov:" + pmcId);
+            parser.parse("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=" + pmcId);
 
             document = parser.getDocument();
         } catch (Exception ex) {
