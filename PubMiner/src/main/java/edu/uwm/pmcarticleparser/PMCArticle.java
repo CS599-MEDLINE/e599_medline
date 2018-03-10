@@ -27,6 +27,9 @@ import org.apache.xerces.impl.Constants;
 
 /**
  * Parses a PMC article
+ *
+ * https://orbit.nlm.nih.gov/browse-repository/software/other/44-pmc-parser
+ *
  * @author Shashank Agarwal
  */
 public class PMCArticle {
