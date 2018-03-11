@@ -1,3 +1,8 @@
+import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.pipeline.CoreNLPProtos;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphFactory.Mode;
+import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.uwm.pmcarticleparser.PMCArticle;
 import edu.uwm.pmcarticleparser.structuralelements.*;
 import org.w3c.dom.Document;
@@ -5,7 +10,12 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.SyncFailedException;
 import java.util.List;
+import java.util.Optional;
+import java.util.StringJoiner;
+
+import edu.stanford.nlp.simple.*;
 
 /**
  * Created by bingao on 3/10/18.
@@ -14,8 +24,11 @@ public class ReadXMLFile {
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("3102623", 0);
+        // pa = new PMCArticle("3102623", 0);
+        pa = new PMCArticle("1308868", 0);
         PMCArticleFullText ft = pa.getFullText();
+
+        /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
         for (PMCArticleSentence sentence : sentences) {
             if (sentence.getInParagraphIndex() == 0) {
@@ -32,6 +45,7 @@ public class ReadXMLFile {
         for (PMCArticleSentence s : abs.getAbstractSentences()) {
             System.out.println(s.getText());
         }
+        */
 
         PMCArticleFullText f = pa.getFullText();
         System.out.println("Number of sentences: " + f.getFullTextSentences().size());
@@ -43,7 +57,22 @@ public class ReadXMLFile {
 
             System.out.println(i + ": " + s.getText());
 
-            System.out.println("WordSet: " + s.getWordSet());
+            // System.out.println("WordSet: " + s.getWordSet());
+
+            Sentence sentence = new Sentence(s.getText());
+            List<String> words = sentence.words();
+            SemanticGraph semanticGraph = sentence.dependencyGraph();
+            // System.out.println("dependencyGraph: " + semanticGraph);
+
+            List<Optional<String>> labels = sentence.incomingDependencyLabels();
+            for (int index=0; index < labels.size(); index++) {
+                Optional<String> labelOptional = labels.get(index);
+                if (labelOptional.isPresent() && labelOptional.get().equals("nummod")) {
+                    System.out.println(words.get(index) + " " + words.get(index+1));
+                }
+            }
+
+            System.out.println("End of numeric modifier list.\n");
 
             ++i;
             System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());
@@ -58,6 +87,7 @@ public class ReadXMLFile {
             System.out.println("");
         }
 
+        /*
         List<PMCArticleFigure> figs = pa.getFigures();
         for (PMCArticleFigure fig : figs) {
             System.out.println("ID: " + fig.getId());
@@ -66,6 +96,8 @@ public class ReadXMLFile {
             System.out.println("Graphic Location: " + fig.getGraphicLocation());
             System.out.println("");
         }
+        */
+
         List<PMCArticleTable> tables = pa.getTables();
         for (PMCArticleTable tab : tables) {
             System.out.println("ID: " + tab.getId());
@@ -74,6 +106,7 @@ public class ReadXMLFile {
             System.out.println("");
         }
 
+        /*
         List<PMCArticleReference> refs = pa.getReferences();
         PMCArticleReference ref = refs.get(11);
         String refID = ref.getId();
@@ -90,5 +123,6 @@ public class ReadXMLFile {
             System.out.println(reference.getText());
             System.out.println();
         }
+        */
     }
 }
