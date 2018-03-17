@@ -14,6 +14,7 @@ import java.io.SyncFailedException;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
+import org.slf4j.impl.StaticLoggerBinder;
 
 import edu.stanford.nlp.simple.*;
 
@@ -24,8 +25,8 @@ public class ReadXMLFile {
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        // pa = new PMCArticle("3102623", 0);
-        pa = new PMCArticle("1308868", 0);
+        pa = new PMCArticle("4724680", 0);
+        // pa = new PMCArticle("1308868", 0);
         PMCArticleFullText ft = pa.getFullText();
 
         /*

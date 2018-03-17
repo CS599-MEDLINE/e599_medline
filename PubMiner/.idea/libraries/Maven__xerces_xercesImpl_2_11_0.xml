@@ -2,8 +2,8 @@
   <library name="Maven: xerces:xercesImpl:2.11.0">
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/java_utils.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/sptoolkit.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../PubMiner/lib/java_utils.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../PubMiner/lib/sptoolkit.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/xerces/xercesImpl/2.11.0/xercesImpl-2.11.0-javadoc.jar!/" />
