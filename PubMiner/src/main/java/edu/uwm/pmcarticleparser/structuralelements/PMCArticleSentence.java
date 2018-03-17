@@ -1,10 +1,10 @@
 package edu.uwm.pmcarticleparser.structuralelements;
 
-import generalutils.TermTokenizer;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
+
+import edu.stanford.nlp.simple.*;
 
 /**
  * Represents a sentence in PMC article. A sentence has several properties,
@@ -32,8 +32,11 @@ public class PMCArticleSentence {
     private String sectionName;
     private String subSectionName;
 
-    private TermTokenizer termTokenizer;
-    Set<String> wordSet;
+    private Sentence stanfordSentence;
+    private List<Optional<String>> dependencyLabels;
+    private List<Integer> nummodIndices;
+    private static final String NUMMOD = "nummod";
+    private List<String> lemmas;
 
     /**
      * Creates an instance of PMCArticleSentence with the given text
@@ -50,8 +53,10 @@ public class PMCArticleSentence {
         sectionName = "No Section";
         subSectionName = "No Sub-section";
 
-        termTokenizer = new TermTokenizer();
-        wordSet = termTokenizer.getTextWordSet(text);
+        stanfordSentence = new Sentence(text);
+        lemmas = null;
+        dependencyLabels = null;
+        nummodIndices = null;
     }
 
     /**
@@ -290,7 +295,46 @@ public class PMCArticleSentence {
         this.totalSentencesInContainingParagraph = totalSentencesInContainingParagraph;
     }
 
-    public Set<String> getWordSet() {
-        return wordSet;
+    public Sentence getStanfordSentence() {
+        return stanfordSentence;
+    }
+
+    public List<String> getLemmas() {
+        if (lemmas==null) {
+            lemmas = stanfordSentence.lemmas();
+        }
+
+        return lemmas;
+    }
+
+    public List<Optional<String>> getDependencyLabels() {
+        populateDependencyFields();
+
+        return dependencyLabels;
+    }
+
+    public int getNummodCount() {
+        populateDependencyFields();
+
+        return nummodIndices.size();
+    }
+
+    public List<Integer> getNummodIndices() {
+        populateDependencyFields();
+
+        return nummodIndices;
+    }
+
+    private void populateDependencyFields() {
+        if (dependencyLabels==null || nummodIndices ==null) {
+            dependencyLabels = stanfordSentence.incomingDependencyLabels();
+            nummodIndices = new ArrayList<>();
+            for (int index=0; index < dependencyLabels.size(); index++) {
+                Optional<String> labelOptional = dependencyLabels.get(index);
+                if (labelOptional.isPresent() && labelOptional.get().equals(NUMMOD)) {
+                    nummodIndices.add(index);
+                }
+            }
+        }
     }
 }

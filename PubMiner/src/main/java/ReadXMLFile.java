@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.SyncFailedException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -23,13 +24,12 @@ import static java.util.Arrays.asList;
  * Created by bingao on 3/10/18.
  */
 public class ReadXMLFile {
-    public static final Set<String> keywords = new HashSet<>(Arrays.asList("male", "female", "age", "aged"));
-    private static final String NUMMOD = "nummod";
+    public static final Set<String> keywords = new HashSet<>(Arrays.asList("male", "female", "age", "aged", "patient"));
 
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("5798762", 0);
+        pa = new PMCArticle("5758165", 0);
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -57,32 +57,19 @@ public class ReadXMLFile {
         pmcArticleSentences.addAll(pmcArticleAbstract.getAbstractSentences());
         pmcArticleSentences.addAll(fullText.getFullTextSentences());
 
+        List<PMCArticleSentence> demographicSentences = pmcArticleSentences.stream().filter(s -> hasKeywords(s
+                .getLemmas()) && s.getNummodCount() > 0).sorted(Comparator.comparing
+                (PMCArticleSentence::getNummodCount).reversed()).collect(Collectors.toList());
+
         System.out.println("Number of sentences: " + pmcArticleSentences.size());
         int i = 0;
-        for (PMCArticleSentence s : pmcArticleSentences) {
-            Sentence sentence = new Sentence(s.getText());
-            List<String> lemmas = sentence.lemmas();
-
-            if (!hasKeywords(lemmas)) {
-                continue;
-            }
-
+        for (PMCArticleSentence s : demographicSentences) {
             // SemanticGraph semanticGraph = sentence.dependencyGraph();
             // System.out.println("dependencyGraph: " + semanticGraph);
 
-            List<Optional<String>> labels = sentence.incomingDependencyLabels();
-
-            if (!labels.stream().anyMatch(label -> label.isPresent() && label.get().equals(NUMMOD))) {
-                continue;
-            }
-
             System.out.println(i + ": " + s.getText());
-            // System.out.println("\tmentions " + sentence.nerTags());
-            for (int index=0; index < labels.size(); index++) {
-                Optional<String> labelOptional = labels.get(index);
-                if (labelOptional.isPresent() && labelOptional.get().equals(NUMMOD)) {
-                    System.out.println(lemmas.get(index) + " " + lemmas.get(index+1));
-                }
+            for (int index : s.getNummodIndices()) {
+                System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index+1));
             }
 
             System.out.println("End of numeric modifier list.\n");
@@ -93,13 +80,21 @@ public class ReadXMLFile {
             System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());
             System.out.println(s.getSectionName());
             System.out.println(s.getSubSectionName());
+
+            /*
             if (s.isRefersCitation()) {
                 List<String> citations = s.getReferedCitationId();
                 for (String citation : citations) {
                     System.out.println("  Citation ID: " + citation);
                 }
             }
-            System.out.println("");
+            */
+
+            System.out.println();
+
+            if (i>=5 && s.getNummodCount()<=1) {
+                break;
+            }
         }
 
         /*
