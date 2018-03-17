@@ -14,7 +14,7 @@ public class PMCArticleFullText {
      * Creates an instance of PMCArticleFullText
      */
     public PMCArticleFullText() {
-        fullTextSentences = new ArrayList<PMCArticleSentence>();
+        fullTextSentences = new ArrayList<>();
     }
 
     /**

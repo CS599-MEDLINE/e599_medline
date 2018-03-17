@@ -11,23 +11,25 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.SyncFailedException;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
+
 import org.slf4j.impl.StaticLoggerBinder;
 
 import edu.stanford.nlp.simple.*;
+
+import static java.util.Arrays.asList;
 
 /**
  * Created by bingao on 3/10/18.
  */
 public class ReadXMLFile {
+    public static final Set<String> keywords = new HashSet<>(Arrays.asList("male", "female", "age", "aged"));
+    private static final String NUMMOD = "nummod";
+
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("4724680", 0);
-        // pa = new PMCArticle("1308868", 0);
-        PMCArticleFullText ft = pa.getFullText();
+        pa = new PMCArticle("5798762", 0);
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -41,39 +43,51 @@ public class ReadXMLFile {
         for (PMCArticleAuthor author : pa.getAuthors()) {
             System.out.println(author.getFirstName() + " - " + author.getLastName() + " - " + author.getEmail());
         }
+        */
 
-        PMCArticleAbstract abs = pa.getAbstract();
-        for (PMCArticleSentence s : abs.getAbstractSentences()) {
+        PMCArticleAbstract pmcArticleAbstract = pa.getAbstract();
+        /*
+        for (PMCArticleSentence s : pmcArticleAbstract.getAbstractSentences()) {
             System.out.println(s.getText());
         }
         */
 
-        PMCArticleFullText f = pa.getFullText();
-        System.out.println("Number of sentences: " + f.getFullTextSentences().size());
+        PMCArticleFullText fullText = pa.getFullText();
+        List<PMCArticleSentence> pmcArticleSentences = new ArrayList<>();
+        pmcArticleSentences.addAll(pmcArticleAbstract.getAbstractSentences());
+        pmcArticleSentences.addAll(fullText.getFullTextSentences());
+
+        System.out.println("Number of sentences: " + pmcArticleSentences.size());
         int i = 0;
-        for (PMCArticleSentence s : f.getFullTextSentences()) {
-            if (!s.getWordSet().contains("age")) {
+        for (PMCArticleSentence s : pmcArticleSentences) {
+            Sentence sentence = new Sentence(s.getText());
+            List<String> lemmas = sentence.lemmas();
+
+            if (!hasKeywords(lemmas)) {
+                continue;
+            }
+
+            // SemanticGraph semanticGraph = sentence.dependencyGraph();
+            // System.out.println("dependencyGraph: " + semanticGraph);
+
+            List<Optional<String>> labels = sentence.incomingDependencyLabels();
+
+            if (!labels.stream().anyMatch(label -> label.isPresent() && label.get().equals(NUMMOD))) {
                 continue;
             }
 
             System.out.println(i + ": " + s.getText());
-
-            // System.out.println("WordSet: " + s.getWordSet());
-
-            Sentence sentence = new Sentence(s.getText());
-            List<String> words = sentence.words();
-            SemanticGraph semanticGraph = sentence.dependencyGraph();
-            // System.out.println("dependencyGraph: " + semanticGraph);
-
-            List<Optional<String>> labels = sentence.incomingDependencyLabels();
+            // System.out.println("\tmentions " + sentence.nerTags());
             for (int index=0; index < labels.size(); index++) {
                 Optional<String> labelOptional = labels.get(index);
-                if (labelOptional.isPresent() && labelOptional.get().equals("nummod")) {
-                    System.out.println(words.get(index) + " " + words.get(index+1));
+                if (labelOptional.isPresent() && labelOptional.get().equals(NUMMOD)) {
+                    System.out.println(lemmas.get(index) + " " + lemmas.get(index+1));
                 }
             }
 
             System.out.println("End of numeric modifier list.\n");
+
+            // System.out.println("\tnerTags: " + sentence.nerTags());
 
             ++i;
             System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());
@@ -97,7 +111,6 @@ public class ReadXMLFile {
             System.out.println("Graphic Location: " + fig.getGraphicLocation());
             System.out.println("");
         }
-        */
 
         List<PMCArticleTable> tables = pa.getTables();
         for (PMCArticleTable tab : tables) {
@@ -107,7 +120,6 @@ public class ReadXMLFile {
             System.out.println("");
         }
 
-        /*
         List<PMCArticleReference> refs = pa.getReferences();
         PMCArticleReference ref = refs.get(11);
         String refID = ref.getId();
@@ -125,5 +137,15 @@ public class ReadXMLFile {
             System.out.println();
         }
         */
+    }
+
+    private static boolean hasKeywords(List<String> words) {
+        for (String word : words) {
+            if (keywords.contains(word)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
