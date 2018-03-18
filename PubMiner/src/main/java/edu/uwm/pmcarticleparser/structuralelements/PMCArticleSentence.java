@@ -1,8 +1,6 @@
 package edu.uwm.pmcarticleparser.structuralelements;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import edu.stanford.nlp.simple.*;
 
@@ -37,6 +35,17 @@ public class PMCArticleSentence {
     private List<Integer> nummodIndices;
     private static final String NUMMOD = "nummod";
     private List<String> lemmas;
+
+    private static final Map<String, Integer> keywordMultiplier = new HashMap<>();
+
+    static {
+        keywordMultiplier.put("patient", 5);
+        keywordMultiplier.put("year", 5);
+        keywordMultiplier.put("male", 5);
+        keywordMultiplier.put("female", 5);
+        keywordMultiplier.put("%", 4);
+        keywordMultiplier.put("subject", 5);
+    }
 
     /**
      * Creates an instance of PMCArticleSentence with the given text
@@ -317,6 +326,26 @@ public class PMCArticleSentence {
         populateDependencyFields();
 
         return nummodIndices.size();
+    }
+
+    public int getDemographicScore() {
+        int score = 0;
+
+        int percentageCount = 0;
+
+        for (int index : getNummodIndices()) {
+            if (getLemmas().get(index + 1).equals("%")) {
+                percentageCount++;
+                if (percentageCount>2) {
+                    continue;
+                }
+            }
+
+            Integer multiplier = keywordMultiplier.get(getLemmas().get(index + 1));
+            score += (multiplier == null ? 1 : multiplier);
+        }
+
+        return score;
     }
 
     public List<Integer> getNummodIndices() {

@@ -29,7 +29,7 @@ public class ReadXMLFile {
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("5758165", 0);
+        pa = new PMCArticle("5758259", 0);
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -59,7 +59,7 @@ public class ReadXMLFile {
 
         List<PMCArticleSentence> demographicSentences = pmcArticleSentences.stream().filter(s -> hasKeywords(s
                 .getLemmas()) && s.getNummodCount() > 0).sorted(Comparator.comparing
-                (PMCArticleSentence::getNummodCount).reversed()).collect(Collectors.toList());
+                (PMCArticleSentence::getDemographicScore).reversed()).collect(Collectors.toList());
 
         System.out.println("Number of sentences: " + pmcArticleSentences.size());
         int i = 0;
@@ -72,7 +72,7 @@ public class ReadXMLFile {
                 System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index+1));
             }
 
-            System.out.println("End of numeric modifier list.\n");
+            System.out.println("End of numeric modifier list. Score: " + s.getDemographicScore() + "\n");
 
             // System.out.println("\tnerTags: " + sentence.nerTags());
 
@@ -92,7 +92,7 @@ public class ReadXMLFile {
 
             System.out.println();
 
-            if (i>=5 && s.getNummodCount()<=1) {
+            if (i>=5) {
                 break;
             }
         }
