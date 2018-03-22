@@ -24,12 +24,10 @@ import static java.util.Arrays.asList;
  * Created by bingao on 3/10/18.
  */
 public class ReadXMLFile {
-    public static final Set<String> keywords = new HashSet<>(Arrays.asList("male", "female", "age", "aged", "patient"));
-
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("5758259", 0);
+        pa = new PMCArticle("2211287", 0);
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -57,8 +55,8 @@ public class ReadXMLFile {
         pmcArticleSentences.addAll(pmcArticleAbstract.getAbstractSentences());
         pmcArticleSentences.addAll(fullText.getFullTextSentences());
 
-        List<PMCArticleSentence> demographicSentences = pmcArticleSentences.stream().filter(s -> hasKeywords(s
-                .getLemmas()) && s.getNummodCount() > 0).sorted(Comparator.comparing
+        List<PMCArticleSentence> demographicSentences = pmcArticleSentences.stream().filter(s -> s.hasAnchors() && s
+                .getNummodCount() > 0).sorted(Comparator.comparing
                 (PMCArticleSentence::getDemographicScore).reversed()).collect(Collectors.toList());
 
         System.out.println("Number of sentences: " + pmcArticleSentences.size());
@@ -132,15 +130,5 @@ public class ReadXMLFile {
             System.out.println();
         }
         */
-    }
-
-    private static boolean hasKeywords(List<String> words) {
-        for (String word : words) {
-            if (keywords.contains(word)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

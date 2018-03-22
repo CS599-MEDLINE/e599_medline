@@ -34,7 +34,10 @@ public class PMCArticleSentence {
     private List<Optional<String>> dependencyLabels;
     private List<Integer> nummodIndices;
     private static final String NUMMOD = "nummod";
+    private static final String DEMO_POSTFIX = "emographics";
     private List<String> lemmas;
+
+    public static final Set<String> ANCHORS = new HashSet<>(Arrays.asList("male", "female", "age", "aged", "patient"));
 
     private static final Map<String, Integer> keywordMultiplier = new HashMap<>();
 
@@ -45,6 +48,17 @@ public class PMCArticleSentence {
         keywordMultiplier.put("female", 5);
         keywordMultiplier.put("%", 4);
         keywordMultiplier.put("subject", 5);
+    }
+
+    private static final Map<String, Integer> keywordMax = new HashMap<>();
+
+    static {
+        keywordMax.put("patient", 1);
+        keywordMax.put("year", 5);
+        keywordMax.put("male", 1);
+        keywordMax.put("female", 1);
+        keywordMax.put("%", 2);
+        keywordMax.put("subject", 1);
     }
 
     /**
@@ -331,18 +345,30 @@ public class PMCArticleSentence {
     public int getDemographicScore() {
         int score = 0;
 
-        int percentageCount = 0;
+        Map<String, Integer> keywordCurrentMax = new HashMap<>();
+
+        if (sectionName.contains(DEMO_POSTFIX) || subSectionName.contains(DEMO_POSTFIX)) {
+            score += 5;
+        }
 
         for (int index : getNummodIndices()) {
-            if (getLemmas().get(index + 1).equals("%")) {
-                percentageCount++;
-                if (percentageCount>2) {
-                    continue;
+            String currentLemma = getLemmas().get(index + 1);
+            Integer multiplier = keywordMultiplier.get(currentLemma);
+            if (multiplier==null) {
+                score++;
+            } else {
+                Integer currentMax = keywordCurrentMax.get(currentLemma);
+                if (currentMax==null) {
+                    keywordCurrentMax.put(currentLemma, 1);
+                    currentMax = 0;
+                } else {
+                    keywordCurrentMax.put(currentLemma, currentMax+1);
+                }
+
+                if (currentMax < keywordMax.get(currentLemma)) {
+                    score += multiplier;
                 }
             }
-
-            Integer multiplier = keywordMultiplier.get(getLemmas().get(index + 1));
-            score += (multiplier == null ? 1 : multiplier);
         }
 
         return score;
@@ -365,5 +391,15 @@ public class PMCArticleSentence {
                 }
             }
         }
+    }
+
+    public boolean hasAnchors() {
+        for (String lemma : getLemmas()) {
+            if (ANCHORS.contains(lemma)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
