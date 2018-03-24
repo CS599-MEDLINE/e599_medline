@@ -1,29 +1,22 @@
 package edu.uwm.pmcarticleparser;
 
+import edu.uwm.pmcarticleparser.structuralelements.*;
 import generalutils.SentenceTokenizer;
-import generalutils.TermTokenizer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+import org.apache.xerces.impl.Constants;
 import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticleAbstract;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticleAuthor;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticleFullText;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticlePublicationDate;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticleFigure;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticleReference;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticleTable;
-import edu.uwm.pmcarticleparser.structuralelements.PMCArticleSentence;
-import org.apache.xerces.impl.Constants;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parses a PMC article

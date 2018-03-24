@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.SyncFailedException;
 import java.util.*;
+import java.util.Map.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.impl.StaticLoggerBinder;
@@ -27,7 +28,7 @@ public class ReadXMLFile {
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("2211287", 0);
+        pa = new PMCArticle("2848718", 0);
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -51,15 +52,42 @@ public class ReadXMLFile {
         */
 
         PMCArticleFullText fullText = pa.getFullText();
-        List<PMCArticleSentence> pmcArticleSentences = new ArrayList<>();
-        pmcArticleSentences.addAll(pmcArticleAbstract.getAbstractSentences());
-        pmcArticleSentences.addAll(fullText.getFullTextSentences());
+        List<PMCArticleSentence> allSentences = new ArrayList<>();
+        allSentences.addAll(pmcArticleAbstract.getAbstractSentences());
+        allSentences.addAll(fullText.getFullTextSentences());
 
-        List<PMCArticleSentence> demographicSentences = pmcArticleSentences.stream().filter(s -> s.hasAnchors() && s
+        /*
+        List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
                 .getNummodCount() > 0).sorted(Comparator.comparing
                 (PMCArticleSentence::getDemographicScore).reversed()).collect(Collectors.toList());
+        */
 
-        System.out.println("Number of sentences: " + pmcArticleSentences.size());
+        List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
+                .getNummodCount() > 0).collect(Collectors.toList());
+
+        Map<String, Integer> numCounts = new HashMap<>();
+        for (PMCArticleSentence s : demographicSentences) {
+            for (int index : s.getNummodIndices()) {
+                String currentLemma = s.getLemmas().get(index);
+                Integer count = numCounts.get(currentLemma);
+                if (count==null) {
+                    numCounts.put(currentLemma, 1);
+                } else {
+                    numCounts.put(currentLemma, count+1);
+                }
+            }
+        }
+        numCounts.entrySet().stream()
+                .sorted(Entry.<String, Integer>comparingByValue().reversed())
+                .limit(10)
+                .forEach(System.out::println);
+
+        System.out.println("Number of sentences: " + allSentences.size());
+
+        demographicSentences = demographicSentences.stream().sorted((s1, s2) ->
+                s2.getDemographicScoreBasedOnNumCounts(numCounts).compareTo(s1.getDemographicScoreBasedOnNumCounts
+                        (numCounts))).collect(Collectors.toList());
+
         int i = 0;
         for (PMCArticleSentence s : demographicSentences) {
             // SemanticGraph semanticGraph = sentence.dependencyGraph();
@@ -67,12 +95,12 @@ public class ReadXMLFile {
 
             System.out.println(i + ": " + s.getText());
             for (int index : s.getNummodIndices()) {
-                System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index+1));
+                System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index+1) + "\t" + numCounts.get(s.getLemmas().get(index)));
             }
 
-            System.out.println("End of numeric modifier list. Score: " + s.getDemographicScore() + "\n");
+            System.out.println("End of numeric modifier list. Score: " + s.getDemographicScoreBasedOnNumCounts(numCounts) + "\n");
 
-            // System.out.println("\tnerTags: " + sentence.nerTags());
+            // System.out.println("\tnerTags: " + s.getNerTags());
 
             ++i;
             System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());

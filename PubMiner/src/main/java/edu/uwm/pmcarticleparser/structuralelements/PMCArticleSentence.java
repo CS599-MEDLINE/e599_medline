@@ -37,28 +37,32 @@ public class PMCArticleSentence {
     private static final String DEMO_POSTFIX = "emographics";
     private List<String> lemmas;
 
-    public static final Set<String> ANCHORS = new HashSet<>(Arrays.asList("male", "female", "age", "aged", "patient"));
+    public static final Set<String> ANCHORS = new HashSet<>(Arrays.asList("patient", "age", "aged", "male", "female", "subject", "individual"));
 
-    private static final Map<String, Integer> keywordMultiplier = new HashMap<>();
+    public static final Set<String> EXCLUSIONS = new HashSet<>(Arrays.asList("±", "1", "®", "one"));
+
+    private static final Map<String, Integer> keywordBase = new HashMap<>();
 
     static {
-        keywordMultiplier.put("patient", 5);
-        keywordMultiplier.put("year", 5);
-        keywordMultiplier.put("male", 5);
-        keywordMultiplier.put("female", 5);
-        keywordMultiplier.put("%", 4);
-        keywordMultiplier.put("subject", 5);
+        keywordBase.put("patient", 5);
+        keywordBase.put("year", 5);
+        keywordBase.put("male", 5);
+        keywordBase.put("female", 5);
+        //keywordBase.put("%", 4);
+        keywordBase.put("subject", 5);
+        keywordBase.put("individual", 5);
     }
 
     private static final Map<String, Integer> keywordMax = new HashMap<>();
 
     static {
         keywordMax.put("patient", 1);
-        keywordMax.put("year", 5);
+        keywordMax.put("year", 2);
         keywordMax.put("male", 1);
         keywordMax.put("female", 1);
-        keywordMax.put("%", 2);
+        //keywordMax.put("%", 2);
         keywordMax.put("subject", 1);
+        keywordMax.put("individual", 1);
     }
 
     /**
@@ -353,7 +357,7 @@ public class PMCArticleSentence {
 
         for (int index : getNummodIndices()) {
             String currentLemma = getLemmas().get(index + 1);
-            Integer multiplier = keywordMultiplier.get(currentLemma);
+            Integer multiplier = keywordBase.get(currentLemma);
             if (multiplier==null) {
                 score++;
             } else {
@@ -374,6 +378,38 @@ public class PMCArticleSentence {
         return score;
     }
 
+    public Double getDemographicScoreBasedOnNumCounts(Map<String, Integer> numCounts) {
+        double score = 0;
+
+        Map<String, Integer> keywordCurrentMax = new HashMap<>();
+
+        for (int index : getNummodIndices()) {
+            String numLemma = getLemmas().get(index);
+            Integer count = numCounts.get(numLemma);
+            double multiplier = 1 + count/10.0;
+
+            String baseLemma = getLemmas().get(index + 1);
+            Integer base = keywordBase.get(baseLemma);
+            if (base==null) {
+                score++;
+            } else {
+                Integer currentMax = keywordCurrentMax.get(baseLemma);
+                if (currentMax==null) {
+                    keywordCurrentMax.put(baseLemma, 1);
+                    currentMax = 0;
+                } else {
+                    keywordCurrentMax.put(baseLemma, currentMax+1);
+                }
+
+                if (currentMax < keywordMax.get(baseLemma)) {
+                    score += multiplier * base;
+                }
+            }
+        }
+
+        return score;
+    }
+
     public List<Integer> getNummodIndices() {
         populateDependencyFields();
 
@@ -384,9 +420,10 @@ public class PMCArticleSentence {
         if (dependencyLabels==null || nummodIndices ==null) {
             dependencyLabels = stanfordSentence.incomingDependencyLabels();
             nummodIndices = new ArrayList<>();
-            for (int index=0; index < dependencyLabels.size(); index++) {
+            for (int index = 0; index < dependencyLabels.size(); index++) {
                 Optional<String> labelOptional = dependencyLabels.get(index);
-                if (labelOptional.isPresent() && labelOptional.get().equals(NUMMOD)) {
+                if (labelOptional.isPresent() && labelOptional.get().equals(NUMMOD) && !EXCLUSIONS.contains(getLemmas
+                        ().get(index)) && index < (getLemmas().size() - 1)) {
                     nummodIndices.add(index);
                 }
             }
@@ -401,5 +438,9 @@ public class PMCArticleSentence {
         }
 
         return false;
+    }
+
+    public List<String> getNerTags() {
+        return getStanfordSentence().nerTags();
     }
 }
