@@ -28,7 +28,7 @@ public class ReadXMLFile {
     public static void main(String argv[]) {
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("2848718", 0);
+        pa = new PMCArticle("3987498", 0);
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();

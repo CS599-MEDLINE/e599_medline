@@ -7,7 +7,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.class" afterPath="$PROJECT_DIR$/target/classes/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ReadXMLFile.java" afterPath="$PROJECT_DIR$/src/main/java/ReadXMLFile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/PMCArticle.java" afterPath="$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/PMCArticle.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.java" afterPath="$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -25,10 +24,10 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ReadXMLFile.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ReadXMLFile.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2335">
+            <state relative-caret-position="489">
               <caret line="162" column="0" lean-forward="true" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -78,11 +77,9 @@
       <file leaf-file-name="PubmedParser.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pubmedparser/PubmedParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1170">
+            <state relative-caret-position="550">
               <caret line="97" column="46" lean-forward="false" selection-start-line="97" selection-start-column="46" selection-end-line="97" selection-end-column="46" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -160,15 +157,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PMCArticleSentence.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PMCArticleSentence.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="478">
-              <caret line="411" column="0" lean-forward="true" selection-start-line="411" selection-start-column="0" selection-end-line="411" selection-end-column="0" />
+            <state relative-caret-position="403">
+              <caret line="42" column="0" lean-forward="true" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#13175#13176#0" expanded="true" />
-                <element signature="e#13229#13230#0" expanded="true" />
+                <element signature="e#13180#13181#0" expanded="true" />
+                <element signature="e#13234#13235#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -242,7 +239,7 @@
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1920" />
-    <option name="height" value="986" />
+    <option name="height" value="985" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -818,11 +815,18 @@
       <option name="project" value="LOCAL" />
       <updated>1521920858135</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="add getDemographicScoreBasedOnNumCounts().">
+      <created>1521929300476</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1521929300476</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1920" height="986" extended-state="6" />
+    <frame x="0" y="23" width="1920" height="985" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -834,8 +838,8 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29306486" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29339305" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32997763" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32997763" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -865,7 +869,8 @@
     <MESSAGE value="Add keyword weights." />
     <MESSAGE value="Updates and refactors." />
     <MESSAGE value="Update the Java complier source and target to be 1.8." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update the Java complier source and target to be 1.8." />
+    <MESSAGE value="add getDemographicScoreBasedOnNumCounts()." />
+    <option name="LAST_COMMIT_MESSAGE" value="add getDemographicScoreBasedOnNumCounts()." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -963,8 +968,8 @@
           <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#13175#13176#0" expanded="true" />
-            <element signature="e#13229#13230#0" expanded="true" />
+            <element signature="e#13180#13181#0" expanded="true" />
+            <element signature="e#13234#13235#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1060,8 +1065,8 @@
           <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#13175#13176#0" expanded="true" />
-            <element signature="e#13229#13230#0" expanded="true" />
+            <element signature="e#13180#13181#0" expanded="true" />
+            <element signature="e#13234#13235#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1128,8 +1133,8 @@
           <caret line="137" column="17" lean-forward="true" selection-start-line="137" selection-start-column="17" selection-end-line="137" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#13175#13176#0" expanded="true" />
-            <element signature="e#13229#13230#0" expanded="true" />
+            <element signature="e#13180#13181#0" expanded="true" />
+            <element signature="e#13234#13235#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1286,16 +1291,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pubmedparser/PubmedParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1170">
-          <caret line="97" column="46" lean-forward="false" selection-start-line="97" selection-start-column="46" selection-end-line="97" selection-end-column="46" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleAbstract.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="465">
@@ -1375,25 +1370,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pubmedparser/PubmedParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2335">
-          <caret line="162" column="0" lean-forward="true" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3023#3040#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="550">
+          <caret line="97" column="46" lean-forward="false" selection-start-line="97" selection-start-column="46" selection-end-line="97" selection-end-column="46" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="411" column="0" lean-forward="true" selection-start-line="411" selection-start-column="0" selection-end-line="411" selection-end-column="0" />
+        <state relative-caret-position="403">
+          <caret line="42" column="0" lean-forward="true" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#13175#13176#0" expanded="true" />
-            <element signature="e#13229#13230#0" expanded="true" />
+            <element signature="e#13180#13181#0" expanded="true" />
+            <element signature="e#13234#13235#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="489">
+          <caret line="162" column="0" lean-forward="true" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3023#3040#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -39,7 +39,7 @@ public class PMCArticleSentence {
 
     public static final Set<String> ANCHORS = new HashSet<>(Arrays.asList("patient", "age", "aged", "male", "female", "subject", "individual"));
 
-    public static final Set<String> EXCLUSIONS = new HashSet<>(Arrays.asList("±", "1", "®", "one"));
+    public static final Set<String> EXCLUSIONS = new HashSet<>(Arrays.asList("±", "1", "®", "one", "0"));
 
     private static final Map<String, Integer> keywordBase = new HashMap<>();
 
