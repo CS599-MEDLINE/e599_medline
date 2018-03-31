@@ -11,8 +11,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.SyncFailedException;
+import java.sql.*;
 import java.util.*;
 import java.util.Map.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.slf4j.impl.StaticLoggerBinder;
@@ -26,9 +29,17 @@ import static java.util.Arrays.asList;
  */
 public class ReadXMLFile {
     public static void main(String argv[]) {
+        String url = "jdbc:postgresql://localhost:5432/pubminer";
+        String user = "root_user";
+        String password = "root_pw";
+
+        String query = "INSERT INTO sentence(pmcid, text) VALUES(?, ?)";
+
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        pa = new PMCArticle("3987498", 0);
+        String pmcid = "3987498";
+
+        pa = new PMCArticle(pmcid, 0);
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -107,6 +118,16 @@ public class ReadXMLFile {
             System.out.println(s.getSectionName());
             System.out.println(s.getSubSectionName());
 
+            try (Connection con = DriverManager.getConnection(url, user, password);
+                 PreparedStatement pst = con.prepareStatement(query)) {
+                pst.setString(1, pmcid);
+                pst.setString(2, s.getText());
+                pst.executeUpdate();
+            } catch (SQLException ex) {
+                Logger lgr = Logger.getLogger(ReadXMLFile.class.getName());
+                lgr.log(Level.SEVERE, ex.getMessage(), ex);
+            }
+
             /*
             if (s.isRefersCitation()) {
                 List<String> citations = s.getReferedCitationId();
@@ -118,7 +139,7 @@ public class ReadXMLFile {
 
             System.out.println();
 
-            if (i>=5) {
+            if (i>=10) {
                 break;
             }
         }
