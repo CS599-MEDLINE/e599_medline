@@ -1,3 +1,8 @@
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.CoreNLPProtos;
 import edu.stanford.nlp.semgraph.SemanticGraph;
@@ -6,6 +11,12 @@ import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.uwm.pmcarticleparser.PMCArticle;
 import edu.uwm.pmcarticleparser.structuralelements.*;
 import org.w3c.dom.Document;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,12 +43,18 @@ public class ReadXMLFile {
         String url = "jdbc:postgresql://localhost:5432/pubminer";
         String user = "root_user";
         String password = "root_pw";
-
         String query = "INSERT INTO sentence(pmcid, text) VALUES(?, ?)";
+
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(Regions.US_EAST_1)
+                .build();
+
+        DynamoDB dynamoDB = new DynamoDB(client);
+        listMyTables(dynamoDB);
 
         PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
 
-        String pmcid = "3987498";
+        String pmcid = "2211287";
 
         pa = new PMCArticle(pmcid, 0);
 
@@ -105,6 +122,7 @@ public class ReadXMLFile {
             // System.out.println("dependencyGraph: " + semanticGraph);
 
             System.out.println(i + ": " + s.getText());
+            System.out.println("lemmas: " + s.getLemmas());
             for (int index : s.getNummodIndices()) {
                 System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index+1) + "\t" + numCounts.get(s.getLemmas().get(index)));
             }
@@ -118,6 +136,7 @@ public class ReadXMLFile {
             System.out.println(s.getSectionName());
             System.out.println(s.getSubSectionName());
 
+            /*
             try (Connection con = DriverManager.getConnection(url, user, password);
                  PreparedStatement pst = con.prepareStatement(query)) {
                 pst.setString(1, pmcid);
@@ -126,14 +145,6 @@ public class ReadXMLFile {
             } catch (SQLException ex) {
                 Logger lgr = Logger.getLogger(ReadXMLFile.class.getName());
                 lgr.log(Level.SEVERE, ex.getMessage(), ex);
-            }
-
-            /*
-            if (s.isRefersCitation()) {
-                List<String> citations = s.getReferedCitationId();
-                for (String citation : citations) {
-                    System.out.println("  Citation ID: " + citation);
-                }
             }
             */
 
@@ -145,15 +156,6 @@ public class ReadXMLFile {
         }
 
         /*
-        List<PMCArticleFigure> figs = pa.getFigures();
-        for (PMCArticleFigure fig : figs) {
-            System.out.println("ID: " + fig.getId());
-            System.out.println("Label: " + fig.getLabel());
-            System.out.println("Caption: " + fig.getCaption());
-            System.out.println("Graphic Location: " + fig.getGraphicLocation());
-            System.out.println("");
-        }
-
         List<PMCArticleTable> tables = pa.getTables();
         for (PMCArticleTable tab : tables) {
             System.out.println("ID: " + tab.getId());
@@ -179,5 +181,18 @@ public class ReadXMLFile {
             System.out.println();
         }
         */
+    }
+
+    public static void listMyTables(DynamoDB dynamoDB) {
+
+        TableCollection<ListTablesResult> tables = dynamoDB.listTables();
+        Iterator<Table> iterator = tables.iterator();
+
+        System.out.println("Listing table names");
+
+        while (iterator.hasNext()) {
+            Table table = iterator.next();
+            System.out.println(table.getTableName());
+        }
     }
 }
