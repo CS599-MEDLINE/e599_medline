@@ -1,8 +1,11 @@
+import com.amazonaws.SystemDefaultDnsResolver;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.*;
-import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.*;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.CoreNLPProtos;
 import edu.stanford.nlp.semgraph.SemanticGraph;
@@ -39,6 +42,10 @@ import static java.util.Arrays.asList;
  * Created by bingao on 3/10/18.
  */
 public class ReadXMLFile {
+
+    private static final String TABLE_NAME = "demographics";
+    private static final String PMCID_COLUMN_NAME = "pmcid";
+
     public static void main(String argv[]) {
         String url = "jdbc:postgresql://localhost:5432/pubminer";
         String user = "root_user";
@@ -50,13 +57,19 @@ public class ReadXMLFile {
                 .build();
 
         DynamoDB dynamoDB = new DynamoDB(client);
-        listMyTables(dynamoDB);
+        Table table = dynamoDB.getTable(TABLE_NAME);
+        ScanRequest scanRequest = new ScanRequest()
+                .withTableName(TABLE_NAME);
+        ScanResult result = client.scan(scanRequest);
+        System.out.println("Item Count: " + result.getItems().size());
 
-        PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4724680.nxml");
+        for (Map<String, AttributeValue> row : result.getItems()) {
+            String pmcid = row.get(PMCID_COLUMN_NAME).getS();
 
-        String pmcid = "2211287";
+            System.out.println("pmcid: " + pmcid);
 
-        pa = new PMCArticle(pmcid, 0);
+            PMCArticle pa = new PMCArticle(pmcid, 0);
+            // pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC2211287.nxml");
 
         /*
         List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -72,17 +85,29 @@ public class ReadXMLFile {
         }
         */
 
-        PMCArticleAbstract pmcArticleAbstract = pa.getAbstract();
+            PMCArticleAbstract pmcArticleAbstract = pa.getAbstract();
         /*
         for (PMCArticleSentence s : pmcArticleAbstract.getAbstractSentences()) {
             System.out.println(s.getText());
         }
         */
 
-        PMCArticleFullText fullText = pa.getFullText();
-        List<PMCArticleSentence> allSentences = new ArrayList<>();
-        allSentences.addAll(pmcArticleAbstract.getAbstractSentences());
-        allSentences.addAll(fullText.getFullTextSentences());
+            PMCArticleFullText fullText = pa.getFullText();
+            List<PMCArticleSentence> allSentences = new ArrayList<>();
+            allSentences.addAll(pmcArticleAbstract.getAbstractSentences());
+            allSentences.addAll(fullText.getFullTextSentences());
+
+            // Skip articles that are invalid.
+            if (allSentences.isEmpty()) {
+                UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(PMCID_COLUMN_NAME, pmcid)
+                        .withUpdateExpression("set invalidPMCID = :val").withValueMap(new ValueMap().withBoolean
+                                (":val", true));
+                UpdateItemOutcome updateItemOutcome = table.updateItem(updateItemSpec);
+
+                System.out.println("UpdateItemOutcome: " + updateItemOutcome);
+
+                continue;
+            }
 
         /*
         List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
@@ -90,51 +115,55 @@ public class ReadXMLFile {
                 (PMCArticleSentence::getDemographicScore).reversed()).collect(Collectors.toList());
         */
 
-        List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
-                .getNummodCount() > 0).collect(Collectors.toList());
+            List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
+                    .getNummodCount() > 0).collect(Collectors.toList());
 
-        Map<String, Integer> numCounts = new HashMap<>();
-        for (PMCArticleSentence s : demographicSentences) {
-            for (int index : s.getNummodIndices()) {
-                String currentLemma = s.getLemmas().get(index);
-                Integer count = numCounts.get(currentLemma);
-                if (count==null) {
-                    numCounts.put(currentLemma, 1);
-                } else {
-                    numCounts.put(currentLemma, count+1);
+            Map<String, Integer> numCounts = new HashMap<>();
+            for (PMCArticleSentence s : demographicSentences) {
+                for (int index : s.getNummodIndices()) {
+                    String currentLemma = s.getLemmas().get(index);
+                    Integer count = numCounts.get(currentLemma);
+                    if (count == null) {
+                        numCounts.put(currentLemma, 1);
+                    } else {
+                        numCounts.put(currentLemma, count + 1);
+                    }
                 }
             }
-        }
-        numCounts.entrySet().stream()
-                .sorted(Entry.<String, Integer>comparingByValue().reversed())
-                .limit(10)
-                .forEach(System.out::println);
+            numCounts.entrySet().stream()
+                    .sorted(Entry.<String, Integer>comparingByValue().reversed())
+                    .limit(10)
+                    .forEach(System.out::println);
 
-        System.out.println("Number of sentences: " + allSentences.size());
+            System.out.println("Number of sentences: " + allSentences.size());
 
-        demographicSentences = demographicSentences.stream().sorted((s1, s2) ->
-                s2.getDemographicScoreBasedOnNumCounts(numCounts).compareTo(s1.getDemographicScoreBasedOnNumCounts
-                        (numCounts))).collect(Collectors.toList());
+            demographicSentences = demographicSentences.stream().sorted((s1, s2) ->
+                    s2.getDemographicScoreBasedOnNumCounts(numCounts).compareTo(s1.getDemographicScoreBasedOnNumCounts
+                            (numCounts))).collect(Collectors.toList());
 
-        int i = 0;
-        for (PMCArticleSentence s : demographicSentences) {
-            // SemanticGraph semanticGraph = sentence.dependencyGraph();
-            // System.out.println("dependencyGraph: " + semanticGraph);
+            List<Map> sentenceList = new ArrayList<>();
 
-            System.out.println(i + ": " + s.getText());
-            System.out.println("lemmas: " + s.getLemmas());
-            for (int index : s.getNummodIndices()) {
-                System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index+1) + "\t" + numCounts.get(s.getLemmas().get(index)));
-            }
+            int i = 0;
+            for (PMCArticleSentence s : demographicSentences) {
+                // SemanticGraph semanticGraph = sentence.dependencyGraph();
+                // System.out.println("dependencyGraph: " + semanticGraph);
 
-            System.out.println("End of numeric modifier list. Score: " + s.getDemographicScoreBasedOnNumCounts(numCounts) + "\n");
+                System.out.println(i + ": " + s.getText());
+                System.out.println("lemmas: " + s.getLemmas());
+                for (int index : s.getNummodIndices()) {
+                    System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index + 1) + "\t" + numCounts.get(s.getLemmas().get(index)));
 
-            // System.out.println("\tnerTags: " + s.getNerTags());
+                }
 
-            ++i;
-            System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());
-            System.out.println(s.getSectionName());
-            System.out.println(s.getSubSectionName());
+                System.out.println("End of numeric modifier list. Score: " + s.getDemographicScoreBasedOnNumCounts
+                        (numCounts) + "\n");
+
+                // System.out.println("\tnerTags: " + s.getNerTags());
+
+                ++i;
+                System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());
+                System.out.println(s.getSectionName());
+                System.out.println(s.getSubSectionName());
 
             /*
             try (Connection con = DriverManager.getConnection(url, user, password);
@@ -148,10 +177,42 @@ public class ReadXMLFile {
             }
             */
 
-            System.out.println();
+                System.out.println();
 
-            if (i>=10) {
-                break;
+                Map sentenceMap = new HashMap();
+                sentenceMap.put("text", s.getText());
+                String sectionName = null;
+                if (!s.getSubSectionName().isEmpty()) {
+                    sectionName = s.getSubSectionName();
+                } else if (!s.getSectionName().isEmpty()) {
+                    sectionName = s.getSectionName();
+                } else {
+                    sectionName = "Abstract";
+                }
+                sentenceMap.put("section", sectionName);
+                sentenceList.add(sentenceMap);
+
+                if (i >= 10) {
+                    break;
+                }
+            }
+
+            if (sentenceList.isEmpty()) {
+                continue;
+            }
+
+            ValueMap valueMap = new ValueMap().withList(":val", sentenceList).withList(":empty_list", new ArrayList<>());
+
+            System.out.println("valueMap: " + valueMap);
+
+            try {
+                UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(PMCID_COLUMN_NAME, pmcid)
+                        .withUpdateExpression("set sentences = list_append(if_not_exists(sentences, :empty_list), :val)")
+
+                        .withValueMap(valueMap).withConditionExpression("attribute_not_exists(sentences)");
+                UpdateItemOutcome updateItemOutcome = table.updateItem(updateItemSpec);
+            } catch (ConditionalCheckFailedException ex) {
+                System.out.println("ConditionalCheckFailedException: " + ex);
             }
         }
 
@@ -173,12 +234,6 @@ public class ReadXMLFile {
             if (sentence.getReferedCitationId().contains(refID)) {
                 System.out.println(sentence.getText());
             }
-        }
-
-        for (PMCArticleReference reference : refs) {
-            System.out.println(reference.getId());
-            System.out.println(reference.getText());
-            System.out.println();
         }
         */
     }
