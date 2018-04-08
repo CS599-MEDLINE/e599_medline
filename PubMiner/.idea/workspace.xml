@@ -26,11 +26,11 @@
       <file leaf-file-name="ReadXMLFile.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="253" column="0" lean-forward="true" selection-start-line="253" selection-start-column="0" selection-end-line="253" selection-end-column="0" />
+            <state relative-caret-position="270">
+              <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#5461#5478#0" expanded="true" />
+                <element signature="e#5700#5717#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -250,6 +250,7 @@
     <findStrings>
       <find>SentenceTokenizer</find>
       <find>individual</find>
+      <find>Item Count</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -891,7 +892,14 @@
       <option name="project" value="LOCAL" />
       <updated>1523117297262</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Update dynamodb with sentences first check-in.">
+      <created>1523128264546</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1523128264546</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -942,7 +950,8 @@
     <MESSAGE value="Minor updates." />
     <MESSAGE value="Add the ability to write the top 10 sentences into the postgresql database." />
     <MESSAGE value="Add com.amazonaws dependencies." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add com.amazonaws dependencies." />
+    <MESSAGE value="Update dynamodb with sentences first check-in." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update dynamodb with sentences first check-in." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -990,7 +999,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5461#5478#0" expanded="true" />
+            <element signature="e#5700#5717#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1136,7 +1145,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5461#5478#0" expanded="true" />
+            <element signature="e#5700#5717#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1282,7 +1291,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5461#5478#0" expanded="true" />
+            <element signature="e#5700#5717#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1407,7 +1416,7 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5461#5478#0" expanded="true" />
+            <element signature="e#5700#5717#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1660,11 +1669,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="253" column="0" lean-forward="true" selection-start-line="253" selection-start-column="0" selection-end-line="253" selection-end-column="0" />
+        <state relative-caret-position="270">
+          <caret line="66" column="0" lean-forward="true" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5461#5478#0" expanded="true" />
+            <element signature="e#5700#5717#0" expanded="true" />
           </folding>
         </state>
       </provider>
