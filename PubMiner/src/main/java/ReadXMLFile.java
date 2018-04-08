@@ -1,4 +1,3 @@
-import com.amazonaws.SystemDefaultDnsResolver;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -6,37 +5,15 @@ import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.*;
-import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.pipeline.CoreNLPProtos;
-import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.semgraph.SemanticGraphFactory.Mode;
-import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.uwm.pmcarticleparser.PMCArticle;
 import edu.uwm.pmcarticleparser.structuralelements.*;
-import org.w3c.dom.Document;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
-import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.SyncFailedException;
-import java.sql.*;
 import java.util.*;
 import java.util.Map.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import org.slf4j.impl.StaticLoggerBinder;
-
-import edu.stanford.nlp.simple.*;
-
-import static java.util.Arrays.asList;
 
 /**
  * Created by bingao on 3/10/18.
@@ -45,12 +22,16 @@ public class ReadXMLFile {
 
     private static final String TABLE_NAME = "demographics";
     private static final String PMCID_COLUMN_NAME = "pmcid";
+    private static final String SENTENCES_COLUMN_NAME = "sentences";
+    private static final String ERROR_STATUS_COLUMN_NAME = "errorStatus";
 
     public static void main(String argv[]) {
         String url = "jdbc:postgresql://localhost:5432/pubminer";
         String user = "root_user";
         String password = "root_pw";
         String query = "INSERT INTO sentence(pmcid, text) VALUES(?, ?)";
+
+        int updateCount = 0;
 
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1)
@@ -67,6 +48,15 @@ public class ReadXMLFile {
 
             for (Map<String, AttributeValue> row : result.getItems()) {
                 String pmcid = row.get(PMCID_COLUMN_NAME).getS();
+
+                if (row.containsKey(SENTENCES_COLUMN_NAME)) {
+                    continue;
+                }
+
+                if (row.containsKey(ERROR_STATUS_COLUMN_NAME)) {
+                    System.out.println("pmcid " + pmcid + " has error: " + row.get(ERROR_STATUS_COLUMN_NAME).getS());
+                    continue;
+                }
 
                 System.out.println("pmcid: " + pmcid);
 
@@ -95,11 +85,11 @@ public class ReadXMLFile {
                 allSentences.addAll(pmcArticleAbstract.getAbstractSentences());
                 allSentences.addAll(fullText.getFullTextSentences());
 
-                // Skip articles that are invalid.
+                // Skip articles that are empty.
                 if (allSentences.isEmpty()) {
                     UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(PMCID_COLUMN_NAME, pmcid)
-                            .withUpdateExpression("set invalidPMCID = :val").withValueMap(new ValueMap().withBoolean
-                                    (":val", true));
+                            .withUpdateExpression("set errorStatus = :val").withValueMap(new ValueMap().withString
+                                    (":val", "empty"));
                     UpdateItemOutcome updateItemOutcome = table.updateItem(updateItemSpec);
 
                     System.out.println("UpdateItemOutcome: " + updateItemOutcome);
@@ -184,12 +174,20 @@ public class ReadXMLFile {
                 }
 
                 if (sentenceList.isEmpty()) {
+                    UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(PMCID_COLUMN_NAME, pmcid)
+                            .withUpdateExpression("set errorStatus = :val").withValueMap(new ValueMap().withString
+                                    (":val", "not randomized clinical trials"));
+                    UpdateItemOutcome updateItemOutcome = table.updateItem(updateItemSpec);
+
+                    System.out.println("UpdateItemOutcome: " + updateItemOutcome);
+
                     continue;
                 }
 
                 ValueMap valueMap = new ValueMap().withList(":val", sentenceList).withList(":empty_list", new ArrayList<>());
 
-                System.out.println("valueMap: " + valueMap);
+                updateCount++;
+                System.out.println("update count: " + updateCount + " valueMap: " + valueMap);
 
                 try {
                     UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(PMCID_COLUMN_NAME, pmcid)
