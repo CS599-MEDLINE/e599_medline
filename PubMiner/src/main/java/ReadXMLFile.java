@@ -26,11 +26,6 @@ public class ReadXMLFile {
     private static final String ERROR_STATUS_COLUMN_NAME = "errorStatus";
 
     public static void main(String argv[]) {
-        String url = "jdbc:postgresql://localhost:5432/pubminer";
-        String user = "root_user";
-        String password = "root_pw";
-        String query = "INSERT INTO sentence(pmcid, text) VALUES(?, ?)";
-
         int updateCount = 0;
 
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
@@ -60,8 +55,8 @@ public class ReadXMLFile {
 
                 System.out.println("pmcid: " + pmcid);
 
-                PMCArticle pa = new PMCArticle(pmcid, 0);
-                // pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC2211287.nxml");
+                // PMCArticle pa = new PMCArticle(pmcid, 0);
+                PMCArticle pa = new PMCArticle("./PMC"+pmcid+".nxml");
 
                 /*
                 List<PMCArticleSentence> sentences = ft.getFullTextSentences();
