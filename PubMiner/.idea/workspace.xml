@@ -7,12 +7,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7487670e-f788-421e-8da1-e80425e5a4d8" name="Default" comment="Add Maven slf4j-simple dependency to clear warning messages and print Stanford parser logs.">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/edu/harvard/LambdaRequestHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ReadXMLFile.class" afterPath="$PROJECT_DIR$/target/classes/ReadXMLFile.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/edu/uwm/pmcarticleparser/PMCArticle.class" afterPath="$PROJECT_DIR$/target/classes/edu/uwm/pmcarticleparser/PMCArticle.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.class" afterPath="$PROJECT_DIR$/target/classes/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PubMiner.iml" afterPath="$PROJECT_DIR$/PubMiner.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ReadXMLFile.java" afterPath="$PROJECT_DIR$/src/main/java/ReadXMLFile.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -29,11 +31,23 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ReadXMLFile.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ReadXMLFile.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="776">
-              <caret line="235" column="0" lean-forward="true" selection-start-line="235" selection-start-column="0" selection-end-line="235" selection-end-column="0" />
+            <state relative-caret-position="2625">
+              <caret line="190" column="17" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="190" selection-end-column="17" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LambdaRequestHandler.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/harvard/LambdaRequestHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1830">
+              <caret line="122" column="1" lean-forward="true" selection-start-line="122" selection-start-column="1" selection-end-line="122" selection-end-column="1" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -44,8 +58,8 @@
       <file leaf-file-name="PubmedParser.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pubmedparser/PubmedParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="29" />
+            <state relative-caret-position="120">
+              <caret line="27" column="13" lean-forward="false" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -74,8 +88,8 @@
       <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1215">
-              <caret line="81" column="10" lean-forward="false" selection-start-line="81" selection-start-column="10" selection-end-line="81" selection-end-column="10" />
+            <state relative-caret-position="1290">
+              <caret line="86" column="10" lean-forward="false" selection-start-line="86" selection-start-column="10" selection-end-line="86" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -158,8 +172,10 @@
         <option value="$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleFullText.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/PMCArticle.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleSentence.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/ReadXMLFile.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/harvard/gao/LambdaRequestHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/harvard/LambdaRequestHandler.java" />
       </list>
     </option>
   </component>
@@ -264,6 +280,7 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -345,13 +362,94 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="uwm" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PubMiner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PubMiner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="edu" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="harvard" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PubMiner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PubMiner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="out" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="artifacts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PubMiner_jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PubMiner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="PubMiner" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -711,7 +809,14 @@
       <option name="project" value="LOCAL" />
       <updated>1523416823875</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Add plugins to build an executable JAR.">
+      <created>1523932759594</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1523932759594</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -732,7 +837,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32997763" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18690096" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19009584" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -766,7 +871,8 @@
     <MESSAGE value="Update to use lastKeyEvaluated." />
     <MESSAGE value="Update to populate &quot;errorStatus&quot; rows if articles encountered is clearly not a randomized clinical trial or other errors." />
     <MESSAGE value="Update to read from the &quot;PMC&lt;pmcid&gt;.nxml&quot; file from the current directory." />
-    <option name="LAST_COMMIT_MESSAGE" value="Update to read from the &quot;PMC&lt;pmcid&gt;.nxml&quot; file from the current directory." />
+    <MESSAGE value="Add plugins to build an executable JAR." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add plugins to build an executable JAR." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -777,14 +883,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/PMCArticle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6000">
-          <caret line="400" column="0" lean-forward="true" selection-start-line="400" selection-start-column="0" selection-end-line="400" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1095,24 +1193,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="776">
-          <caret line="235" column="0" lean-forward="true" selection-start-line="235" selection-start-column="0" selection-end-line="235" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pubmedparser/PubmedParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleAbstract.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="465">
@@ -1129,26 +1209,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1215">
-          <caret line="81" column="10" lean-forward="false" selection-start-line="81" selection-start-column="10" selection-end-line="81" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/structuralelements/PMCArticleTable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="13" lean-forward="false" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/PMCArticle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1350">
-          <caret line="106" column="22" lean-forward="false" selection-start-line="106" selection-start-column="22" selection-end-line="106" selection-end-column="22" />
           <folding />
         </state>
       </provider>
@@ -1166,6 +1230,50 @@
         <state relative-caret-position="420">
           <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pubmedparser/PubmedParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="27" column="13" lean-forward="false" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/uwm/pmcarticleparser/PMCArticle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1350">
+          <caret line="106" column="22" lean-forward="false" selection-start-line="106" selection-start-column="22" selection-end-line="106" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1290">
+          <caret line="86" column="10" lean-forward="false" selection-start-line="86" selection-start-column="10" selection-end-line="86" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/ReadXMLFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2625">
+          <caret line="190" column="17" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="190" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/harvard/LambdaRequestHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1830">
+          <caret line="122" column="1" lean-forward="true" selection-start-line="122" selection-start-column="1" selection-end-line="122" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

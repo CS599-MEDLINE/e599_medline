@@ -69,11 +69,6 @@ public class ReadXMLFile {
                 */
 
                 PMCArticleAbstract pmcArticleAbstract = pa.getAbstract();
-                /*
-                for (PMCArticleSentence s : pmcArticleAbstract.getAbstractSentences()) {
-                    System.out.println(s.getText());
-                }
-                */
 
                 PMCArticleFullText fullText = pa.getFullText();
                 List<PMCArticleSentence> allSentences = new ArrayList<>();
