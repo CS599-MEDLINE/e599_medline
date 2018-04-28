@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Represents an abstract
  * @author agarwal
+ * @author gaob@github
  */
 public class PMCArticleAbstract {
     /**
@@ -17,7 +18,7 @@ public class PMCArticleAbstract {
      * Default constructor of the class
      */
     public PMCArticleAbstract() {
-        abstractSentences = new ArrayList<PMCArticleSentence>();
+        abstractSentences = new ArrayList<>();
     }
 
     /**

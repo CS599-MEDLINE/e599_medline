@@ -113,7 +113,7 @@ public class SentencesMiner {
                 continue;
             }
 
-            List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
+            List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchorWords() && s
                     .getNummodCount() > 0).collect(Collectors.toList());
 
             Map<String, Integer> numCounts = new HashMap<>();

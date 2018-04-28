@@ -10,20 +10,11 @@ import edu.stanford.nlp.simple.*;
  * the index of this sentence in the article, the section this sentence appears
  * in, the subsection (if any) the sentence appears in.
  *
- * Split sentence into terms using a simple termTokenizer.
- *
  * @author agarwal
- * @author gaob@github
+ * @author gaob@github, add demographic scores to determine whether a sentence will likely contain demographic information.
  */
 public class PMCArticleSentence {
     private String text;
-    private String citationReplacedText;
-    private boolean refersFigure;
-    private boolean refersTable;
-    private boolean refersCitation;
-    protected List<String> referedFigureId;
-    protected List<String> referedTableId;
-    protected List<String> referedCitationId;
     private int inParagraphIndex;
     private int totalSentencesInContainingParagraph;
     private int indexInDocument;
@@ -34,33 +25,27 @@ public class PMCArticleSentence {
     private List<Optional<String>> dependencyLabels;
     private List<Integer> nummodIndices;
     private static final String NUMMOD = "nummod";
-    private static final String DEMO_POSTFIX = "emographics";
     private List<String> lemmas;
 
-    public static final Set<String> ANCHORS = new HashSet<>(Arrays.asList("patient", "age", "aged", "male", "female", "subject", "individual"));
-
-    public static final Set<String> EXCLUSIONS = new HashSet<>(Arrays.asList("±", "1", "®", "one", "0"));
+    private static final Set<String> ANCHOR_WORDS = new HashSet<>(Arrays.asList("patient", "age", "aged", "male", "female", "subject", "individual"));
+    private static final Set<String> EXCLUSION_NUMMOD = new HashSet<>(Arrays.asList("±", "1", "®", "one", "0"));
 
     private static final Map<String, Integer> keywordBase = new HashMap<>();
-
     static {
         keywordBase.put("patient", 5);
         keywordBase.put("year", 5);
         keywordBase.put("male", 5);
         keywordBase.put("female", 5);
-        //keywordBase.put("%", 4);
         keywordBase.put("subject", 5);
         keywordBase.put("individual", 5);
     }
 
     private static final Map<String, Integer> keywordMax = new HashMap<>();
-
     static {
         keywordMax.put("patient", 1);
         keywordMax.put("year", 2);
         keywordMax.put("male", 1);
         keywordMax.put("female", 1);
-        //keywordMax.put("%", 2);
         keywordMax.put("subject", 1);
         keywordMax.put("individual", 1);
     }
@@ -71,11 +56,6 @@ public class PMCArticleSentence {
      */
     public PMCArticleSentence(String text) {
         this.text = text;
-        refersCitation = false;
-        refersFigure = false;
-        referedCitationId = new ArrayList<String>();
-        referedFigureId = new ArrayList<String>();
-        referedTableId = new ArrayList<String>();
         inParagraphIndex = -1;
         sectionName = "No Section";
         subSectionName = "No Sub-section";
@@ -91,78 +71,6 @@ public class PMCArticleSentence {
      */
     public PMCArticleSentence() {
         this("");
-    }
-
-    /**
-     * Get the value of refersCitation
-     *
-     * @return the value of refersCitation
-     */
-    public boolean isRefersCitation() {
-        return refersCitation;
-    }
-
-    /**
-     * Set the value of refersCitation
-     *
-     * @param refersCitation new value of refersCitation
-     */
-    public void setRefersCitation(boolean refersCitation) {
-        this.refersCitation = refersCitation;
-    }
-
-    /**
-     * Get the value of refersTable
-     *
-     * @return the value of refersTable
-     */
-    public boolean isRefersTable() {
-        return refersTable;
-    }
-
-    /**
-     * Set the value of refersTable
-     *
-     * @param refersTable new value of refersTable
-     */
-    public void setRefersTable(boolean refersTable) {
-        this.refersTable = refersTable;
-    }
-
-    /**
-     * Get the value of refersFigure
-     *
-     * @return the value of refersFigure
-     */
-    public boolean isRefersFigure() {
-        return refersFigure;
-    }
-
-    /**
-     * Set the value of refersFigure
-     *
-     * @param refersFigure new value of refersFigure
-     */
-    public void setRefersFigure(boolean refersFigure) {
-        this.refersFigure = refersFigure;
-    }
-
-    /**
-     * Get the value of citationReplacedText
-     *
-     * @return the value of citationReplacedText
-     */
-    public String getCitationReplacedText() {
-        return citationReplacedText;
-    }
-
-    /**
-     * Set the value of citationReplacedText
-     *
-     * @param citationReplacedText new value of citationReplacedText
-     */
-    public void setCitationReplacedText(String citationReplacedText) {
-        this.citationReplacedText = citationReplacedText;
     }
 
     /**
@@ -214,60 +122,6 @@ public class PMCArticleSentence {
      */
     public void setIndexInDocument(int indexInDocument) {
         this.indexInDocument = indexInDocument;
-    }
-
-    /**
-     * Gets the list of CitationIds referred by this sentence. If no citations 
-     * are referred to by this sentence, then an empty list is returned.
-     * @return the list of citations referred by this sentence
-     */
-    public List<String> getReferedCitationId() {
-        return referedCitationId;
-    }
-
-    /**
-     * Adds a citation that is referred by this sentence
-     * @param referedCitationId the id of the citation referred by this sentence
-     */
-    public void addReferedCitationId(String referedCitationId) {
-        this.referedCitationId.add(referedCitationId);
-        refersCitation = true;
-    }
-
-    /**
-     * Gets the list of FigureIds referred by this sentence. If no figures
-     * are referred to by this sentence, then an empty list is returned.
-     * @return the list of figures referred by this sentence
-     */
-    public List<String> getReferedFigureId() {
-        return referedFigureId;
-    }
-
-    /**
-     * Adds a figure that is referred by this sentence
-     * @param referedFigureId the id of the figure referred by this sentence
-     */
-    public void addReferedFigureId(String referedFigureId) {
-        this.referedFigureId.add(referedFigureId);
-        refersFigure = true;
-    }
-
-    /**
-     * Gets the list of TableIds referred by this sentence. If no tables 
-     * are referred to by this sentence, then an empty list is returned.
-     * @return the list of tables referred by this sentence
-     */
-    public List<String> getReferedTableId() {
-        return referedTableId;
-    }
-
-    /**
-     * Adds a table that is referred by this sentence
-     * @param referedTableId the id of the table referred by this sentence
-     */
-    public void addReferedTableId(String referedTableId) {
-        this.referedTableId.add(referedTableId);
-        refersTable = true;
     }
 
     /**
@@ -346,14 +200,11 @@ public class PMCArticleSentence {
         return nummodIndices.size();
     }
 
+    @Deprecated
     public int getDemographicScore() {
         int score = 0;
 
         Map<String, Integer> keywordCurrentMax = new HashMap<>();
-
-        if (sectionName.contains(DEMO_POSTFIX) || subSectionName.contains(DEMO_POSTFIX)) {
-            score += 5;
-        }
 
         for (int index : getNummodIndices()) {
             String currentLemma = getLemmas().get(index + 1);
@@ -417,12 +268,13 @@ public class PMCArticleSentence {
     }
 
     private void populateDependencyFields() {
-        if (dependencyLabels==null || nummodIndices ==null) {
+        if (dependencyLabels == null || nummodIndices == null) {
             dependencyLabels = stanfordSentence.incomingDependencyLabels();
             nummodIndices = new ArrayList<>();
             for (int index = 0; index < dependencyLabels.size(); index++) {
                 Optional<String> labelOptional = dependencyLabels.get(index);
-                if (labelOptional.isPresent() && labelOptional.get().equals(NUMMOD) && !EXCLUSIONS.contains(getLemmas
+                if (labelOptional.isPresent() && labelOptional.get().equals(NUMMOD) && !EXCLUSION_NUMMOD.contains
+                        (getLemmas
                         ().get(index)) && index < (getLemmas().size() - 1)) {
                     nummodIndices.add(index);
                 }
@@ -430,17 +282,13 @@ public class PMCArticleSentence {
         }
     }
 
-    public boolean hasAnchors() {
+    public boolean hasAnchorWords() {
         for (String lemma : getLemmas()) {
-            if (ANCHORS.contains(lemma)) {
+            if (ANCHOR_WORDS.contains(lemma)) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    public List<String> getNerTags() {
-        return getStanfordSentence().nerTags();
     }
 }

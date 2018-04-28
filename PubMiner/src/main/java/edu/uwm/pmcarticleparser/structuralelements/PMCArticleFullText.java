@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * PMC Articl Full Text
  * @author agarwal
+ * @author gaob@github
  */
 public class PMCArticleFullText {
     private List<PMCArticleSentence> fullTextSentences;

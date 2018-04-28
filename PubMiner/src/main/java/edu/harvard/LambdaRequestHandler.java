@@ -1,9 +1,6 @@
 package edu.harvard;
 
-import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
-import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import edu.uwm.pmcarticleparser.PMCArticle;
@@ -42,7 +39,7 @@ public class LambdaRequestHandler implements RequestHandler<String, String> {
             return "Skip articles that are empty";
         }
 
-        List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
+        List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchorWords() && s
                 .getNummodCount() > 0).collect(Collectors.toList());
 
         Map<String, Integer> numCounts = new HashMap<>();

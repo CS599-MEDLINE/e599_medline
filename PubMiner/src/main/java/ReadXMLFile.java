@@ -1,4 +1,3 @@
-import com.amazonaws.SystemDefaultDnsResolver;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -12,19 +11,13 @@ import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import edu.uwm.pmcarticleparser.PMCArticle;
 import edu.uwm.pmcarticleparser.structuralelements.PMCArticleAbstract;
 import edu.uwm.pmcarticleparser.structuralelements.PMCArticleFullText;
 import edu.uwm.pmcarticleparser.structuralelements.PMCArticleSentence;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
-import org.xml.sax.InputSource;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.util.*;
@@ -150,12 +143,12 @@ public class ReadXMLFile {
                 }
 
                 /*
-                List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
+                List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchorWords() && s
                         .getNummodCount() > 0).sorted(Comparator.comparing
                         (PMCArticleSentence::getDemographicScore).reversed()).collect(Collectors.toList());
                 */
 
-                List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchors() && s
+                List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchorWords() && s
                         .getNummodCount() > 0).collect(Collectors.toList());
 
                 Map<String, Integer> numCounts = new HashMap<>();

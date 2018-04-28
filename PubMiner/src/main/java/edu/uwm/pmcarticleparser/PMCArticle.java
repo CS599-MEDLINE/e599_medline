@@ -440,7 +440,7 @@ public class PMCArticle {
     /**
      * Private recursive function to get abstract text.
      * @param articleAbstract the article's abstract object
-     * @param nodes
+     * @param node
      * @param section
      */
     private void getAbstractHelper(PMCArticleAbstract articleAbstract, Node node, String section) {
@@ -483,7 +483,6 @@ public class PMCArticle {
         s = s.replaceAll("</xref>", "");
 
         PMCArticleSentence sentence = new PMCArticleSentence(text);
-        sentence.setCitationReplacedText(citationReplacedText);
         sentence.setInParagraphIndex(indexInParagraph);
         sentence.setTotalSentencesInContainingParagraph(totalSentencesInParagraph);
         sentence.setIndexInDocument(indexInDocument);
@@ -492,15 +491,6 @@ public class PMCArticle {
 
         Pattern xrefPattern = Pattern.compile("<xref ref-type=\"([^\"]+)\" rid=\"([^\"]+)\">");
         Matcher xrefMatcher = xrefPattern.matcher(s);
-        while (xrefMatcher.find()) {
-            if ("fig".equalsIgnoreCase(xrefMatcher.group(1))) {
-                sentence.addReferedFigureId(xrefMatcher.group(2));
-            } else if ("table".equalsIgnoreCase(xrefMatcher.group(1))) {
-                sentence.addReferedTableId(xrefMatcher.group(2));
-            } else if ("bibr".equalsIgnoreCase(xrefMatcher.group(1))) {
-                sentence.addReferedCitationId(xrefMatcher.group(2));
-            }
-        }
         return sentence;
     }
 
