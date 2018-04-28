@@ -8,11 +8,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -78,6 +80,22 @@ public class PMCArticle {
             parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             parser.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.NAMESPACES_FEATURE, false);
             parser.parse(articleLocation);
+            document = parser.getDocument();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Constructs an instance of PMCArticle.
+     * @param inputStream the input stream of the article xml file
+     */
+    public PMCArticle(InputStream inputStream) {
+        try {
+            DOMParser parser = new DOMParser();
+            parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            parser.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.NAMESPACES_FEATURE, false);
+            parser.parse(new InputSource(inputStream));
             document = parser.getDocument();
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -1,18 +1,34 @@
+import com.amazonaws.SystemDefaultDnsResolver;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
+import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import edu.uwm.pmcarticleparser.PMCArticle;
-import edu.uwm.pmcarticleparser.structuralelements.*;
+import edu.uwm.pmcarticleparser.structuralelements.PMCArticleAbstract;
+import edu.uwm.pmcarticleparser.structuralelements.PMCArticleFullText;
+import edu.uwm.pmcarticleparser.structuralelements.PMCArticleSentence;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.xml.sax.InputSource;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStream;
 import java.util.*;
-import java.util.Map.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +40,7 @@ public class ReadXMLFile {
     private static final String PMCID_COLUMN_NAME = "pmcid";
     private static final String SENTENCES_COLUMN_NAME = "sentences";
     private static final String ERROR_STATUS_COLUMN_NAME = "errorStatus";
+    private static final String BUCKET_NAME = "pubmedcentral_oa";
 
     public static void main(String argv[]) {
         int updateCount = 0;
@@ -35,7 +52,25 @@ public class ReadXMLFile {
         DynamoDB dynamoDB = new DynamoDB(client);
         Map<String, AttributeValue> lastKeyEvaluated = null;
         Table table = dynamoDB.getTable(TABLE_NAME);
+
+        List<String> pmcids = new ArrayList<>();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONArray jsonArray = (JSONArray) parser.parse(new FileReader("./newRCTs.json"));
+            for (Object pmcid : jsonArray) {
+                pmcids.add((String)pmcid);
+            }
+        } catch (Exception ex) {
+            System.out.println("Caught Exception while reading json file: " + ex);
+            return;
+        }
+
+        final AmazonS3 s3 = AmazonS3ClientBuilder.standard()
+                .withRegion(Regions.US_EAST_1)
+                .build();
+
         do {
+            /*
             ScanRequest scanRequest = new ScanRequest()
                     .withTableName(TABLE_NAME).withExclusiveStartKey(lastKeyEvaluated);
             ScanResult result = client.scan(scanRequest);
@@ -43,20 +78,47 @@ public class ReadXMLFile {
 
             for (Map<String, AttributeValue> row : result.getItems()) {
                 String pmcid = row.get(PMCID_COLUMN_NAME).getS();
+            */
+            for (String pmcid : pmcids) {
+                QuerySpec querySpec = new QuerySpec()
+                        .withKeyConditionExpression("pmcid = :pmc_id")
+                        .withValueMap(new ValueMap()
+                                .withString(":pmc_id", pmcid));
+                ItemCollection<QueryOutcome> items = table.query(querySpec);
+                Iterator<Item> iterator = items.iterator();
+                if (!iterator.hasNext()) {
+                    System.out.println("This pmc id cannot be found in dynamodb: " + pmcid);
+                }
+                Item item = iterator.next();
 
-                if (row.containsKey(SENTENCES_COLUMN_NAME)) {
+                //if (row.containsKey(SENTENCES_COLUMN_NAME)) {
+                if (item.hasAttribute(SENTENCES_COLUMN_NAME)) {
+                    System.out.println("This pmc id is already in dynamodb: " + pmcid);
                     continue;
                 }
 
-                if (row.containsKey(ERROR_STATUS_COLUMN_NAME)) {
-                    System.out.println("pmcid " + pmcid + " has error: " + row.get(ERROR_STATUS_COLUMN_NAME).getS());
+                //if (row.containsKey(ERROR_STATUS_COLUMN_NAME)) {
+                if (item.hasAttribute(ERROR_STATUS_COLUMN_NAME)) {
+                    //System.out.println("pmcid " + pmcid + " has error: " + row.get(ERROR_STATUS_COLUMN_NAME).getS());
+                    System.out.println("pmcid " + pmcid + " has error: " + item.get(ERROR_STATUS_COLUMN_NAME));
                     continue;
                 }
 
                 System.out.println("pmcid: " + pmcid);
 
+                PMCArticle pa;
+                try {
+                    String key_name = "PMC" + pmcid + ".nxml";
+                    S3Object o = s3.getObject(BUCKET_NAME, key_name);
+                    InputStream s3is = o.getObjectContent();
+                    pa = new PMCArticle(s3is);
+                } catch (Exception ex) {
+                    System.out.println("Caught Exception while reading s3 file: " + ex);
+                    continue;
+                }
+
                 // PMCArticle pa = new PMCArticle(pmcid, 0);
-                PMCArticle pa = new PMCArticle("./PMC"+pmcid+".nxml");
+                // PMCArticle pa = new PMCArticle("./PMC"+pmcid+".nxml");
 
                 /*
                 List<PMCArticleSentence> sentences = ft.getFullTextSentences();
@@ -190,8 +252,8 @@ public class ReadXMLFile {
                     System.out.println("ConditionalCheckFailedException: " + ex);
                 }
             }
-            lastKeyEvaluated = result.getLastEvaluatedKey();
-        } while (lastKeyEvaluated != null);
+            //lastKeyEvaluated = result.getLastEvaluatedKey();
+        } while (false);
 
         /*
         List<PMCArticleTable> tables = pa.getTables();
