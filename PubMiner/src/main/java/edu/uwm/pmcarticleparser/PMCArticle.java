@@ -17,8 +17,6 @@ import javax.xml.xpath.XPathFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Parses a PMC article
@@ -26,13 +24,12 @@ import java.util.regex.Pattern;
  * https://orbit.nlm.nih.gov/browse-repository/software/other/44-pmc-parser
  *
  * @author Shashank Agarwal
+ * @author gaob@github, extend the class to read from pubmed efetch API and InputStream (such as from AWS S3 bucket).
  */
 public class PMCArticle {
     public static final String TITLE_XPATH = "//title-group/article-title";
     public static final String JOURNAL_XPATH = "//journal-title";
     public static final String AUTHORS_XPATH = "//contrib-group/contrib[@contrib-type='author']";
-//    public static final String AUTHORS_NAME_XPATH = "//contrib-group/contrib[@contrib-type='author']/name";
-//    public static final String AUTHORS_ADDRESS_XPATH = "//contrib-group/contrib[@contrib-type='author']/address";
     public static final String ABSTRACT_XPATH = "//abstract";
     public static final String PUBLICATION_DATE_DAY_XPATH = "//pub-date/day";
     public static final String PUBLICATION_DATE_MONTH_XPATH = "//pub-date/month";
@@ -121,7 +118,6 @@ public class PMCArticle {
             DOMParser parser = new DOMParser();
             parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             parser.setFeature(Constants.SAX_FEATURE_PREFIX + Constants.NAMESPACES_FEATURE, false);
-            //parser.parse("http://www.pubmedcentral.nih.gov/oai/oai.cgi?verb=GetRecord&metadataPrefix=pmc&identifier=oai:pubmedcentral.nih.gov:" + pmcId);
             parser.parse("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=" + pmcId);
 
             document = parser.getDocument();
@@ -141,8 +137,7 @@ public class PMCArticle {
      * @return the title of the article
      */
     public String getTitle() {
-        String title = commonElementParser(TITLE_XPATH, NO_TITLE_DEFAULT);
-        return title;
+        return commonElementParser(TITLE_XPATH, NO_TITLE_DEFAULT);
     }
 
     /**
@@ -215,10 +210,10 @@ public class PMCArticle {
             XPathExpression expression = xPath.compile(AUTHORS_XPATH);
             NodeList sectionNodes = (NodeList) expression.evaluate(document, XPathConstants.NODESET);
             if (sectionNodes.getLength() == 0) {
-                return new ArrayList<PMCArticleAuthor>();
+                return new ArrayList<>();
             }
 
-            List<PMCArticleAuthor> authorList = new ArrayList<PMCArticleAuthor>();
+            List<PMCArticleAuthor> authorList = new ArrayList<>();
             Node node, childNode, grandChildNode;
             String firstName;
             String lastName;
@@ -256,7 +251,7 @@ public class PMCArticle {
             }
             return authorList;
         } catch (Exception ex) {
-            return new ArrayList<PMCArticleAuthor>();
+            return new ArrayList<>();
         }
     }
 
@@ -265,7 +260,7 @@ public class PMCArticle {
      * @return List of figures in this article
      */
     public List<PMCArticleFigure> getFigures() {
-        List<PMCArticleFigure> figureList = new ArrayList<PMCArticleFigure>();
+        List<PMCArticleFigure> figureList = new ArrayList<>();
         try {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
@@ -312,7 +307,7 @@ public class PMCArticle {
      * content in the table
      */
     public List<PMCArticleTable> getTables() {
-        List<PMCArticleTable> tableList = new ArrayList<PMCArticleTable>();
+        List<PMCArticleTable> tableList = new ArrayList<>();
         try {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
@@ -415,7 +410,7 @@ public class PMCArticle {
      * @return list of references in the article
      */
     public List<PMCArticleReference> getReferences() {
-        List<PMCArticleReference> references = new ArrayList<PMCArticleReference>();
+        List<PMCArticleReference> references = new ArrayList<>();
         try {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
@@ -440,8 +435,8 @@ public class PMCArticle {
     /**
      * Private recursive function to get abstract text.
      * @param articleAbstract the article's abstract object
-     * @param node
-     * @param section
+     * @param node node
+     * @param section section
      */
     private void getAbstractHelper(PMCArticleAbstract articleAbstract, Node node, String section) {
         int indexInParagraph;
@@ -478,9 +473,6 @@ public class PMCArticle {
             String section, String subsection) {
 
         String text = s.replaceAll("</?xref.*?>", "");
-        String citationReplacedText = s.replaceAll("<xref +?ref-type=\"bibr\".*?>.*?</xref>", citationReplacement);
-        citationReplacedText = citationReplacedText.replaceAll("</?xref.*?>", "");
-        s = s.replaceAll("</xref>", "");
 
         PMCArticleSentence sentence = new PMCArticleSentence(text);
         sentence.setInParagraphIndex(indexInParagraph);
@@ -489,8 +481,6 @@ public class PMCArticle {
         sentence.setSectionName(section);
         sentence.setSubSectionName(subsection);
 
-        Pattern xrefPattern = Pattern.compile("<xref ref-type=\"([^\"]+)\" rid=\"([^\"]+)\">");
-        Matcher xrefMatcher = xrefPattern.matcher(s);
         return sentence;
     }
 
@@ -536,7 +526,6 @@ public class PMCArticle {
             if ((node.getNodeName() != null) && "p".equalsIgnoreCase(node.getNodeName())) {
                 indexInParagraph = INDEX_FROM;
                 String paragraphText = getTextHelper(node.getChildNodes()).toString();
-//                paragraphText = paragraphText.replaceAll("\\^", "");
                 sentences = SentenceTokenizer.getSentences(paragraphText);
                 for (String sentence : sentences) {
                     articleFullText.addSentence(postProcessSentence(sentence, indexInParagraph, sentences.length, fullTextSentenceIndex, section, subSection));
@@ -577,76 +566,4 @@ public class PMCArticle {
             return defaultText;
         }
     }
-
-//    public static void main(String args[]) {
-//        PMCArticle pa = new PMCArticle("/Users/bingao/Desktop/SampleFiles/PMC4736352.nxml");
-//        PMCArticleFullText ft = pa.getFullText();
-//        List<PMCArticleSentence> sentences = ft.getFullTextSentences();
-//        for (PMCArticleSentence sentence : sentences) {
-//            if (sentence.getInParagraphIndex() == 0) {
-//                System.out.println("");
-//            }
-//            System.out.print(" " + sentence.getText());
-//        }
-//
-//        for (PMCArticleAuthor author : pa.getAuthors()) {
-//            System.out.println(author.getFirstName() + " - " + author.getLastName() + " - " + author.getEmail());
-//        }
-//
-//        PMCArticleAbstract abs = pa.getAbstract();
-//        for (PMCArticleSentence s : abs.getAbstractSentences()) {
-//            System.out.println(s.getText());
-//        }
-//
-//        PMCArticleFullText f = pa.getFullText();
-//        System.out.println("Number of sentences: " + f.getFullTextSentences().size());
-//        int i = 0;
-//        for (PMCArticleSentence s : f.getFullTextSentences()) {
-//            System.out.println(i + ": " + s.getText());
-//            ++i;
-//            System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());
-//            System.out.println(s.getSectionName());
-//            System.out.println(s.getSubSectionName());
-//            if (s.isRefersCitation()) {
-//                List<String> citations = s.getReferedCitationId();
-//                for (String citation : citations) {
-//                    System.out.println("  Citation ID: " + citation);
-//                }
-//            }
-//            System.out.println("");
-//        }
-//
-//        List<PMCArticleFigure> figs = pa.getFigures();
-//        for (PMCArticleFigure fig : figs) {
-//            System.out.println("ID: " + fig.getId());
-//            System.out.println("Label: " + fig.getLabel());
-//            System.out.println("Caption: " + fig.getCaption());
-//            System.out.println("Graphic Location: " + fig.getGraphicLocation());
-//            System.out.println("");
-//        }
-//        List<PMCArticleTable> tables = pa.getTables();
-//        for (PMCArticleTable tab : tables) {
-//            System.out.println("ID: " + tab.getId());
-//            System.out.println("Label: " + tab.getLabel());
-//            System.out.println("Caption: " + tab.getCaption());
-//            System.out.println("");
-//        }
-//
-//        List<PMCArticleReference> refs = pa.getReferences();
-//        PMCArticleReference ref = refs.get(11);
-//        String refID = ref.getId();
-//
-//        PMCArticleFullText paft = pa.getFullText();
-//        for (Sentence sentence : paft.getFullTextSentences()) {
-//            if (sentence.getReferedCitationId().contains(refID)) {
-//                System.out.println(sentence.getText());
-//            }
-//        }
-//
-//        for (PMCArticleReference ref : refs) {
-//            System.out.println(ref.getId());
-//            System.out.println(ref.getText());
-//            System.out.println();
-//        }
-//    }
 }
