@@ -86,26 +86,21 @@ public class SentencesMiner {
             System.out.println("pmcid: " + pmcid);
 
             // Getting the PMCArticle from AWS S3 bucket.
-            PMCArticle pa;
+            PMCArticle pmcArticle;
             try {
                 String key_name = "PMC" + pmcid + ".nxml";
                 S3Object o = s3Client.getObject(BUCKET_NAME, key_name);
                 InputStream s3is = o.getObjectContent();
-                pa = new PMCArticle(s3is);
+                pmcArticle = new PMCArticle(s3is);
             } catch (Exception ex) {
                 System.out.println("Caught Exception while reading s3 file: " + ex);
                 continue;
             }
 
-            PMCArticleAbstract pmcArticleAbstract = pa.getAbstract();
-
-            PMCArticleFullText fullText = pa.getFullText();
-            List<PMCArticleSentence> allSentences = new ArrayList<>();
-            allSentences.addAll(pmcArticleAbstract.getAbstractSentences());
-            allSentences.addAll(fullText.getFullTextSentences());
+            List<PMCArticleSentence> demographicSentences = getDemographicSentences(pmcArticle);
 
             // Skip articles that are empty.
-            if (allSentences.isEmpty()) {
+            if (demographicSentences.isEmpty()) {
                 UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(PMCID_COLUMN_NAME, pmcid)
                         .withUpdateExpression("set errorStatus = :val").withValueMap(new ValueMap().withString
                                 (":val", "empty"));
@@ -113,48 +108,12 @@ public class SentencesMiner {
                 continue;
             }
 
-            List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchorWords() && s
-                    .getNummodCount() > 0).collect(Collectors.toList());
-
-            Map<String, Integer> numCounts = new HashMap<>();
-            for (PMCArticleSentence s : demographicSentences) {
-                for (int index : s.getNummodIndices()) {
-                    String currentLemma = s.getLemmas().get(index);
-                    Integer count = numCounts.get(currentLemma);
-                    if (count == null) {
-                        numCounts.put(currentLemma, 1);
-                    } else {
-                        numCounts.put(currentLemma, count + 1);
-                    }
-                }
-            }
-
-            // Debugging info: numeric modifier frequency in the article.
-            numCounts.entrySet().stream()
-                    .sorted(Entry.<String, Integer>comparingByValue().reversed())
-                    .limit(10)
-                    .forEach(System.out::println);
-
-            System.out.println("Number of sentences: " + allSentences.size());
-
-            demographicSentences = demographicSentences.stream().sorted((s1, s2) ->
-                    s2.getDemographicScoreBasedOnNumCounts(numCounts).compareTo(s1.getDemographicScoreBasedOnNumCounts
-                            (numCounts))).collect(Collectors.toList());
-
             List<Map> sentenceList = new ArrayList<>();
 
             int i = 0;
             for (PMCArticleSentence s : demographicSentences) {
                 System.out.println(i + ": " + s.getText());
                 System.out.println("lemmas: " + s.getLemmas());
-                for (int index : s.getNummodIndices()) {
-                    System.out.println(s.getLemmas().get(index) + " " + s.getLemmas().get(index + 1) + "\t" +
-                            numCounts.get(s.getLemmas().get(index)));
-                }
-
-                System.out.println("End of numeric modifier list. Score: " + s.getDemographicScoreBasedOnNumCounts
-                        (numCounts) + "\n");
-
                 System.out.println(s.getInParagraphIndex() + "/" + s.getTotalSentencesInContainingParagraph());
                 System.out.println(s.getSectionName());
                 System.out.println(s.getSubSectionName());
@@ -205,5 +164,49 @@ public class SentencesMiner {
                 System.out.println("ConditionalCheckFailedException: " + ex);
             }
         }
+    }
+
+    public static List<PMCArticleSentence> getDemographicSentences(PMCArticle pmcArticle) {
+        PMCArticleAbstract pmcArticleAbstract = pmcArticle.getAbstract();
+
+        PMCArticleFullText fullText = pmcArticle.getFullText();
+        List<PMCArticleSentence> allSentences = new ArrayList<>();
+        allSentences.addAll(pmcArticleAbstract.getAbstractSentences());
+        allSentences.addAll(fullText.getFullTextSentences());
+
+        // Skip articles that are empty.
+        if (allSentences.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<PMCArticleSentence> demographicSentences = allSentences.stream().filter(s -> s.hasAnchorWords() && s
+                .getNummodCount() > 0).collect(Collectors.toList());
+
+        Map<String, Integer> numCounts = new HashMap<>();
+        for (PMCArticleSentence s : demographicSentences) {
+            for (int index : s.getNummodIndices()) {
+                String currentLemma = s.getLemmas().get(index);
+                Integer count = numCounts.get(currentLemma);
+                if (count == null) {
+                    numCounts.put(currentLemma, 1);
+                } else {
+                    numCounts.put(currentLemma, count + 1);
+                }
+            }
+        }
+
+        // Debugging info: numeric modifier frequency in the article.
+        numCounts.entrySet().stream()
+                .sorted(Entry.<String, Integer>comparingByValue().reversed())
+                .limit(10)
+                .forEach(System.out::println);
+
+        System.out.println("Number of sentences: " + allSentences.size());
+
+        demographicSentences = demographicSentences.stream().sorted((s1, s2) ->
+                s2.getDemographicScoreBasedOnNumCounts(numCounts).compareTo(s1.getDemographicScoreBasedOnNumCounts
+                        (numCounts))).collect(Collectors.toList());
+
+        return demographicSentences;
     }
 }
