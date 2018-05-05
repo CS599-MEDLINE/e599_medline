@@ -27,7 +27,9 @@ public class PMCArticleSentence {
     private static final String NUMMOD = "nummod";
     private List<String> lemmas;
 
-    private static final Set<String> ANCHOR_WORDS = new HashSet<>(Arrays.asList("patient", "age", "aged", "male", "female", "subject", "individual"));
+    // "women" and "men" are included because Stanford lemmatization sometimes doesn't reduce these plural forms to their singular forms.
+    private static final Set<String> ANCHOR_WORDS = new HashSet<>(Arrays.asList("patient", "age", "aged", "male",
+            "female", "subject", "individual", "woman", "man", "women", "men", "people"));
     private static final Set<String> EXCLUSION_NUMMOD = new HashSet<>(Arrays.asList("±", "1", "®", "one", "0"));
 
     private static final Map<String, Integer> keywordBase = new HashMap<>();
@@ -38,6 +40,11 @@ public class PMCArticleSentence {
         keywordBase.put("female", 5);
         keywordBase.put("subject", 5);
         keywordBase.put("individual", 5);
+        keywordBase.put("woman", 5);
+        keywordBase.put("man", 5);
+        keywordBase.put("women", 5);
+        keywordBase.put("men", 5);
+        keywordBase.put("people", 5);
     }
 
     private static final Map<String, Integer> keywordMax = new HashMap<>();
@@ -48,6 +55,11 @@ public class PMCArticleSentence {
         keywordMax.put("female", 1);
         keywordMax.put("subject", 1);
         keywordMax.put("individual", 1);
+        keywordMax.put("woman", 1);
+        keywordMax.put("man", 1);
+        keywordMax.put("women", 1);
+        keywordMax.put("men", 1);
+        keywordMax.put("people", 1);
     }
 
     /**
