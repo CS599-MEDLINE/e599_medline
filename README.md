@@ -28,18 +28,20 @@ The Lambda functions can be setup using the an AWS Cloud Formation template. The
  
 Each Lambda function is described in a dedicated section, along with the trigger events, and the example ARN for the running platform. A brief overview of the Lambda functions follows:  
 
--“GetPMCUpdatesFromCSV” does the search, intersection of PMIDs and PMCIDs for the Open Access subset, and the initial population of items in the demographics and demographics_meta tables. 
--“DownloadPMC-OAFileToS3” does the download of files from PMC-OA and the upload to S3. 
--“TruncateTable” does the table truncation. The AWS Lambda package includes the BeautifulSoup4 and lxml packages, which are not included by default on Lambda. 
--The sentence extraction is performed on an EC2 instance, which is launched with a “user-data” script to perform the installation of the packages and necessary .jar file to run. The file “SentenceMinerOnEC2Instance” does these steps.   
--The function "UpdateStatsInDemographicsMeta" does a final update to the demographics_meta dynamodb table with the statistics of the latest update to the demographics table
-Roles and Policies     
+- “GetPMCUpdatesFromCSV” does the search, intersection of PMIDs and PMCIDs for the Open Access subset, and the initial population of items in the demographics and demographics_meta tables. 
+- “DownloadPMC-OAFileToS3” does the download of files from PMC-OA and the upload to S3. 
+- “TruncateTable” does the table truncation. The AWS Lambda package includes the BeautifulSoup4 and lxml packages, which are not included by default on Lambda. 
+- The sentence extraction is performed on an EC2 instance, which is launched with a “user-data” script to perform the installation of the packages and necessary .jar file to run. The file “SentenceMinerOnEC2Instance” does these steps.   
+- The function "UpdateStatsInDemographicsMeta" does a final update to the demographics_meta dynamodb table with the statistics of the latest update to the demographics table  
+
+Roles and Policies  
+-----   
 
 Three AWS Roles are created from within the Cloud Formation template, along with their associated AWS Policy documents. They are:  
 
--The role “PM_lambda-dynamo-execution-role” which is for the Lambda functions which poll the dynamodb streams, and which write to the dynamodb tables and S3.   
--The role “PM_lambda_start_stop_ec2” which is for the sentence extraction Lambda function to poll the dynamodb stream, launch the EC2 instance, as well as write to the dynamodb tables and S3. 
-The role "PM_lambda_dynamodb_S3_role" is for the other Lambda functions which do not require permission to invoke functions or launch instances, but require permissions to write to Dynamodb or to Put to or Get from S3 buckets.  
+- The role “PM_lambda-dynamo-execution-role” which is for the Lambda functions which poll the dynamodb streams, and which write to the dynamodb tables and S3.   
+- The role “PM_lambda_start_stop_ec2” which is for the sentence extraction Lambda function to poll the dynamodb stream, launch the EC2 instance, as well as write to the dynamodb tables and S3. 
+- The role "PM_lambda_dynamodb_S3_role" is for the other Lambda functions which do not require permission to invoke functions or launch instances, but require permissions to write to Dynamodb or to Put to or Get from S3 buckets.  
 
 The Policy documents are included in the Role creation template, as inline Policies.   
 
