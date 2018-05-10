@@ -4,7 +4,7 @@ Repository for the spring 2018 CSCI E-599 MEDLINE project team
 Setup
 =====
 
-The file [setup.ipynb](setup.ipynb) contains the setup insructions and code for the backend services on AWS:  DynamoDB, S3 buckets, and AWS Lambda setup
+The file [setup.ipynb](https://nbviewer.jupyter.org/github/CS599-MEDLINE/e599_medline/blob/master/setup.ipynb) contains the setup insructions and code for the backend services on AWS:  DynamoDB, S3 buckets, and AWS Lambda setup
 -----
 
 The backend elements are running on AWS using the services AWS Lambda, DynamoDB, IAM, S3, EC2, Cloud Formation and CloudWatch. The installation and configuration of the DynamoDB tables and the S3 buckets has been performed with the boto3 library in Python 3.6. The IAM roles and policies, the AWS Lambda functions and the associated event triggers are created with a AWS Cloud Formation template. The entire backend can be installed from scratch using Python and boto3, first creating the database tables and S3 buckets (or using the ones in place, as “pubmedcentral_oa” is about 40 GB) and then launching the Cloud Formation template with boto3. Every step is provided with instructions in a Jupyter notebook setup.ipynb.
@@ -14,7 +14,7 @@ Currently all of the AWS services are running from a single account, and the AWS
 DynamoDB databases
 ----
 
-The DynamoDB tables “demographics” and “demographics_meta”  are created with just the primary key elements, and throughput capacities. The remaining attributes are created populated by the Lambda functions. The tables are created in setup.ipynb using boto3. There are also a full set of maintenance functions in the Jupyter notebook [create_table.ipynb](create_table.ipynb) (batch populate, inquiring about the tables, database queries, updating, deleting items, etc.).  
+The DynamoDB tables “demographics” and “demographics_meta”  are created with just the primary key elements, and throughput capacities. The remaining attributes are created populated by the Lambda functions. The tables are created in setup.ipynb using boto3. There are also a full set of maintenance functions in the Jupyter notebook [create_table.ipynb](https://nbviewer.jupyter.org/github/CS599-MEDLINE/e599_medline/blob/master/create_table.ipynb) (batch populate, inquiring about the tables, database queries, updating, deleting items, etc.).  
 
 S3 buckets  
 -----
@@ -48,7 +48,7 @@ The Policy documents are included in the Role creation template, as inline Polic
 Testing the installation
 -----
 
-The file [setup.ipynb](setup.ipynb) contains the JSON code for the test events of the individual Lambda functions. In addition, the set of BeautifulSoup tests can be run from the notebook to confirm that the table mining functions are working as expected.  
+The file [setup.ipynb](https://nbviewer.jupyter.org/github/CS599-MEDLINE/e599_medline/blob/master/setup.ipynb) contains the JSON code for the test events of the individual Lambda functions. In addition, the set of BeautifulSoup tests can be run from the notebook to confirm that the table mining functions are working as expected.  
 
 
 Note for Full Installation
