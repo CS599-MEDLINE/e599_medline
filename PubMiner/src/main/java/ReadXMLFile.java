@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by bingao on 3/10/18.
+ * This file is mostly used for experimenting with new weights.
  */
 public class ReadXMLFile {
 
@@ -217,6 +218,20 @@ public class ReadXMLFile {
                         break;
                     }
                 }
+
+                /*
+                i = 0;
+                for (PMCArticleSentence s : demographicSentences) {
+                    System.out.println((i++) + ": " + s.getText());
+                    if (i >= 10) {
+                        break;
+                    }
+                }
+
+                if (pmcid!=null) {
+                    break;
+                }
+                */
 
                 if (sentenceList.isEmpty()) {
                     UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey(PMCID_COLUMN_NAME, pmcid)
