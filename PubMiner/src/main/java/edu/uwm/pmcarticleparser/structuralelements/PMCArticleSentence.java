@@ -11,7 +11,7 @@ import edu.stanford.nlp.simple.*;
  * in, the subsection (if any) the sentence appears in.
  *
  * @author agarwal
- * @author gaob@github, add demographic scores to determine whether a sentence will likely contain demographic information.
+ * @author gaob@github, add demographic scores calculations to determine whether a sentence will likely contain demographic information.
  */
 public class PMCArticleSentence {
     private String text;
